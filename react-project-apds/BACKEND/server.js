@@ -1,55 +1,41 @@
 const express = require('express');
 const cors = require('cors');
-const bodyParser = require('body-parser');
-const mongoose = require('mongoose');
 const https = require('https');
 const fs = require('fs');
-
 const app = express();
-const PORT = 5001;
+const PORT = 3001;
+const user = require("./routes/user");
+const { connectToDatabase } = require('./db/conn');
 
-// Load SSL certificate files (replace with your actual paths)
-const options = {
-    key: fs.readFileSync('./keys/privatekey.pem'),     
-    cert: fs.readFileSync('./keys/certificate.pem') 
-};
+// Connects to the database
+connectToDatabase().catch(err => {
+    console.error('Failed to connect to the database', err);
+    process.exit(1); // Exit the application if the database connection fails
+});
 
-console.log()
+//Creates a variable called options that contains the key and certificate and then is used when the server starts
+let options;
+try {
+    options = {
+        key: fs.readFileSync('./keys/key.pem'),     
+        cert: fs.readFileSync('./keys/certificate.pem')
+    };
+    console.log("Keys added");
+} catch (error) {
+    console.error('Error loading SSL certificate or key:', error);
+    process.exit(1);
+}
+
+//Routes
 app.use(cors());
-app.use(bodyParser.json());
-app.timeout = 120000; // Sets timeout to 2 minutes (in milliseconds)
-// Connect to MongoDB
-mongoose.connect('mongodb+srv://st10108388:Xaei2Jqljq3AI6iv@apds-poe-part-2.f0ko9.mongodb.net/APDS-POE-DATABASE?retryWrites=true&w=majority&appName=APDS-POE-PART-2', {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-});
+app.use(express.json());
+app.use('/user',user);
+app.route("/user",user);
 
-const UserSchema = new mongoose.Schema({
-    firstName: String,
-    lastName: String,
-    email: String,
-    username: String,
-    password: String,
-    accountNumber: String,
-    idNumber: String,
-});
-
-const User = mongoose.model('User', UserSchema);
-
-app.post('/register', async (req, res) => {
-    const { firstName, lastName, email, username, password, accountNumber, idNumber } = req.body;
-    const user = new User({ firstName, lastName, email, username, password, accountNumber, idNumber });
-
-    try {
-        await user.save();
-        res.status(201).send(user);
-    } catch (error) {
-        console.error('Error saving user:', error);  // Log the error
-        res.status(400).send(error);
-    }
-});
 
 // Create HTTPS server
 https.createServer(options, app).listen(PORT, () => {
     console.log(`Server is running on https://localhost:${PORT}`);
 });
+
+//------------------------------------------END OF FILE-----------------------------------//

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+
 
 const Register = () => {
     const [enteredFirstName, setEnteredFirstName] = useState('');
@@ -10,9 +11,12 @@ const Register = () => {
     const [enteredConfirmPassword, setEnteredConfirmPassword] = useState('');
     const [enteredAccountNumber, setAccountNumber] = useState('');
     const [enteredIDNumber, setIDNumber] = useState('');
+    const [error, setError] = useState(''); // State for error message
+    const [successMessage, setSuccessMessage] = useState(''); // State for success message
 
+    const navigate = useNavigate();
     const handleRegister = async (e) => {
-        e.preventDefault(); 
+        e.preventDefault();
 
         const userData = {
             firstName: enteredFirstName,
@@ -25,20 +29,36 @@ const Register = () => {
         };
 
         try {
-            const response = await fetch('https://localhost:5001/register', {
+            const response = await fetch('https://localhost:3001/user/register', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(userData),
             });
+
             if (response.ok) {
-                console.log('User registered successfully');
+                const result = await response.json();
+                setSuccessMessage('User registered successfully!');
+                console.log('User registered successfully:', result);
+                navigate('/login'); // Use navigate to redirect to the login page
+                setEnteredFirstName('');
+                setEnteredLastName('');
+                setEnteredEmailAddress('');
+                setEnteredUsername('');
+                setEnteredPassword('');
+                setEnteredConfirmPassword('');
+                setAccountNumber('');
+                setIDNumber('');
+                setError('');
             } else {
-                console.error('Registration failed');
+                const errorData = await response.json();
+                setError(errorData.error || 'Registration failed');
+                console.error('Registration failed:', errorData);
             }
         } catch (error) {
             console.error('Error:', error);
+            setError('An error occurred while registering. Please try again.');
         }
     };
 
@@ -112,6 +132,8 @@ const Register = () => {
                 </div>
                 <button type="submit">Register</button>
             </form>
+            {error && <p style={{ color: 'red' }}>{error}</p>} {/* Display error message */}
+            {successMessage && <p style={{ color: 'green' }}>{successMessage}</p>} {/* Display success message */}
             <p>
                 Don't have an account? <Link to="/Login">login here</Link>
             </p>

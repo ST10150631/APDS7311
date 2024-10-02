@@ -1,23 +1,25 @@
-// conn.mjs
-import mongoose from 'mongoose';
-import {MongoClient} from "mongodb";
-import dotenv from 'dotenv';
+const mongoose = require('mongoose');
+const dotenv = require('dotenv');
+
 dotenv.config();
 
 const connectionString = process.env.ATLAS_URI || "";
 
-console.log(connectionString);
+console.log("MongoDB Connection String:", connectionString);
 
-const client = new MongoClient(connectionString);
+const connectToDatabase = async () => {
+    try {
+        // Connect to MongoDB using Mongoose
+        await mongoose.connect(connectionString, {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+        });
+        console.log('MongoDB IS CONNECTED');
+        
+    } catch (e) {
+        console.error('Database connection error:', e);
+        throw e;
+    }
+};
 
-let conn;
-try{
-    conn = await client.connect();
-    console.log('mongoDB IS CONNECTED');
-}catch(e){
-    console.error(e);
-}
-
-let db = client.db('APDS-POE-DATABASE')
-
-export default db;
+module.exports = { connectToDatabase };
