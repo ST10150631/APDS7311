@@ -7,12 +7,13 @@ import Register from './Pages/Register';
 import Login from './Pages/Login';
 import Dashboard from './Pages/Dashboard';
 import Test from './Pages/Test';
+import InternationalPayment from './Pages/InternationalPayments'
 //Router for navigation so if a new page is created add the path to this so that you can use links to access it 
 //-------------------------------------------------------//
   const router = createBrowserRouter([
     {
       path: "/",
-      element: <Register/>,
+      element: <InternationalPayment/>,
     },
     {
       path: "Dashboard",

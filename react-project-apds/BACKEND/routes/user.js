@@ -19,26 +19,44 @@ const UserSchema = new mongoose.Schema({
 
 const User = mongoose.model('User', UserSchema);
 
-// Set up express-brute
+// Account Schema for MongoDB
+const AccountSchema = new mongoose.Schema({
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }, // Reference to User
+    balance: { type: Number, default: 0.0 }, 
+    accountNumber: { type: String, required: true },
+});
+
+const Account = mongoose.model('Account', AccountSchema);
+
 const store = new ExpressBrute.MemoryStore(); 
 const bruteforce = new ExpressBrute(store);
 
 //-------------------------------------------------------------//
 // Handle the POST request for registration
+// Creates a User and Account for the user and then connects that account to the user
 router.post('/register', async (req, res) => {
-    const { firstName, lastName, email, username, password, accountNumber, idNumber } = req.body;
-
+    const { firstName, lastName, email, username, password, idNumber } = req.body; // Removed accountNumber from the request body
     try {
+        const accountNumber = 'AC' + Math.floor(1000000000 + Math.random() * 9000000000);
+        // Hash the user's password
         const hashedPassword = await bcrypt.hash(password, 10); // 10 is the salt rounds
-        const user = new User({ firstName, lastName, email, username, password: hashedPassword, accountNumber, idNumber });
+        const user = new User({ firstName, lastName, email, username, password: hashedPassword, idNumber });
         const savedUser = await user.save();
-        res.status(201).send(savedUser);
-        console.log('User registered successfully:', savedUser);
+        const account = new Account({
+            userId: savedUser._id, // Link to the user
+            accountNumber,         
+            balance: 0.0           
+        });
+        const savedAccount = await account.save();
+        // Send back both the user and account information
+        res.status(201).send({ user: savedUser, account: savedAccount });
+        console.log('User registered and account created successfully:', savedUser, savedAccount);
     } catch (error) {
-        console.error('Error saving user:', error);
-        res.status(400).send({ error: "Failed to register user" });
+        console.error('Error saving user or creating account:', error);
+        res.status(400).send({ error: "Failed to register user or create account" });
     }
 });
+
 //-------------------------------------------------------------//
 // Handle the POST request for login with brute force protection
 router.post('/login', bruteforce.prevent, async (req, res) => {
@@ -55,8 +73,12 @@ router.post('/login', bruteforce.prevent, async (req, res) => {
         }
         // Generate a JWT token
         const token = jwt.sign({ id: user._id, username: user.username }, 'your_jwt_secret', { expiresIn: '1h' });
-        // Send the token and user information
-        res.status(200).send({ token, user: { id: user._id, username: user.username } });
+
+        // Fetch the user's account information
+        const account = await Account.findOne({ userId: user._id });
+
+        // Send the token, user, and account information
+        res.status(200).send({ token, user: { id: user._id, username: user.username }, account });
     } catch (error) {
         console.error('Error logging in user:', error);
         res.status(500).send({ error: "Internal server error" });

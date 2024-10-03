@@ -5,6 +5,7 @@ const fs = require('fs');
 const app = express();
 const PORT = 3001;
 const user = require("./routes/user");
+const payment = require("./routes/payment");
 const { connectToDatabase } = require('./db/conn');
 
 // Connects to the database
@@ -31,6 +32,9 @@ app.use(cors());
 app.use(express.json());
 app.use('/user',user);
 app.route("/user",user);
+app.use('/payment',payment)
+app.route('/payment',payment)
+
 
 
 // Create HTTPS server

@@ -30,7 +30,7 @@ const Login = () => {
                 const result = await response.json();
                 setSuccessMessage('Login successful!');
                 localStorage.setItem('token', result.token);
-                navigate('/test');
+                navigate('/dashboard');
             } else {
                 const errorData = await response.json();
                 setError(errorData.error || 'Login failed');
