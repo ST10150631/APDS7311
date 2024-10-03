@@ -1,0 +1,95 @@
+.button {
+    background-color: #034078;
+    color: white;
+    border-radius: 5px;
+    border: none;
+    height: 100px;
+    margin: 10px;
+    width: 300px;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+}
+.bgDashboard{
+    height: 2000px;
+    width: 100%;
+    background: linear-gradient(180deg, #034078, #0a1128); /* Apply gradient to the entire background */
+}
+.dashboard-container {
+    display: flex;
+    
+}
+
+.TopNavbar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #034078;
+    color: white;
+    width: 100%;
+    height: 80px;
+}
+
+.Image-Banner {
+    display: flex;
+    width: 100%;
+    height: 180px;
+    margin-bottom: 20px;
+    overflow: hidden;
+}
+
+.sidebar {
+    width: 200px;
+    border-right: 1px solid #ccc;
+    background-color: #034078;
+    padding: 10px;
+    color: white;
+}
+
+.nav-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+.nav-list li {
+    margin-bottom: 10px;
+}
+
+.nav-list a {
+    color: white;
+    text-decoration: none;
+}
+
+.main-content {
+    margin-left: 180px;
+    padding: 20px;
+    border-radius: 15px;
+    margin-right: 180px;
+    background-color: aliceblue;
+    flex: 1;
+}
+
+.banking-details {
+    margin-top: 20px;
+}
+
+.payment-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+.payment-list li {
+    margin-bottom: 20px;
+}
+
+.payment-list button {
+    margin-left: 20px;
+    background-color: #034078;
+    color: white;
+    border-radius: 5px;
+    border: none;
+    height: fit-content;
+    padding: 10px 20px;
+    font-size: 14px;
+    cursor: pointer;
+}
