@@ -4,6 +4,8 @@ import './App.css';
 
 import Login from './Pages/Login'
 import Register from './Pages/Register'
+import LocalPayments from './Pages/LocalPayments';
+import InternationalPayments from './Pages/InternationalPayments';
 
 const App = () => {
     return(

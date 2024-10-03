@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Logo from '../Img/SWIFT BANKING.png'
 
 const InternationalPayments = () => {
     const navigate = useNavigate();
@@ -49,7 +50,12 @@ const InternationalPayments = () => {
     };
 
     return (
-        <div>
+        <div className='bgPay'>
+                <div className="TopNavbar">
+        <img src={Logo} className="logo" alt="Logo" />
+        <h1>International Payment</h1>
+    </div>
+
             <div className='international-payment-container'>
                 <div className='form-container'>
                     <h1>International Payment</h1>
@@ -99,8 +105,8 @@ const InternationalPayments = () => {
                                 required
                             />
                         </div>
-                        <button type="submit" className="pay-now-btn">Pay Now</button>
-                        <button type="button" className="cancel-btn" onClick={handleCancel}>Cancel</button>
+                        <button type="submit" className="button">Pay Now</button>
+                        <button type="button" className="button" onClick={handleCancel}>Cancel</button>
                     </form>
                 </div>
             </div>
