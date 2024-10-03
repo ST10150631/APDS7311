@@ -4,13 +4,6 @@
     box-sizing: border-box;  
 }
 
-html, body {
-    height: 100%;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
 
 .form-container {
     animation: slideIn 0.5s ease-in-out;
