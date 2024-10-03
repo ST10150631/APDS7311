@@ -1,16 +1,52 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-const Test = () => {
+
+const InternationalPayments = () => {
     const navigate = useNavigate();
     const handleCancel = () => {
         navigate('/dashboard');  
     };
 
-    const [enteredRecipientsName, setEnteredRecipientsName] = useState();
-    const [enteredRecipientsBank, setEnteredRecipientsBank] = useState();
-    const [enteredRecipientsAccountNumber, setEnteredRecipientsAccountNumber] = useState();
-    const [enteredAmountToTransfer, setEnteredAmountToTransfer] = useState();
-    const [enteredSWIFTCode, setEnteredSWIFTCode] = useState();
+    const [enteredRecipientsName, setEnteredRecipientsName] = useState('');
+    const [enteredRecipientsBank, setEnteredRecipientsBank] = useState('');
+    const [enteredRecipientsAccountNumber, setEnteredRecipientsAccountNumber] = useState('');
+    const [enteredAmountToTransfer, setEnteredAmountToTransfer] = useState('');
+    const [enteredSWIFTCode, setEnteredSWIFTCode] = useState('');
+
+    const handleInternationalPayment = async (e) => {
+        e.preventDefault();
+        
+        const token = localStorage.getItem('jwt_token'); 
+
+        const paymentData = {
+            recipientName: enteredRecipientsName,
+            recipientsBank: enteredRecipientsBank,
+            recipientsAccountNumber: enteredRecipientsAccountNumber,
+            amountToTransfer: parseFloat(enteredAmountToTransfer),
+            swiftCode: enteredSWIFTCode
+        };
+
+        try {
+            const response = await fetch('https://localhost:3001/payment/internationalpayment', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}` 
+                },
+                body: JSON.stringify(paymentData)
+            });
+
+            const data = await response.json();
+            if (response.ok) {
+                console.log('Payment successful:', data);
+                navigate('/dashboard'); 
+            } else {
+                console.error('Error processing payment:', data);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    };
 
     return (
         <div>
@@ -21,7 +57,7 @@ const Test = () => {
                         <div className='input-group'>
                             <input
                                 type='text'
-                                placeholder='Recepients Name'
+                                placeholder='Recipient Name'
                                 value={enteredRecipientsName}
                                 onChange={(e) => setEnteredRecipientsName(e.target.value)}
                                 required
@@ -39,17 +75,16 @@ const Test = () => {
                         <div className='input-group'>
                             <input
                                 type='text'
-                                placeholder='Recipients account no'
+                                placeholder='Recipients Account No'
                                 value={enteredRecipientsAccountNumber}
                                 onChange={(e) => setEnteredRecipientsAccountNumber(e.target.value)}
                                 required
                             />
-
                         </div>
                         <div className='input-group'>
                             <input
                                 type='text'
-                                placeholder='Amount to transfer'
+                                placeholder='Amount to Transfer'
                                 value={enteredAmountToTransfer}
                                 onChange={(e) => setEnteredAmountToTransfer(e.target.value)}
                                 required
@@ -73,4 +108,4 @@ const Test = () => {
     );
 };
 
-export default Test;
+export default InternationalPayments;

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import './styles/Register.css';
 
+//------------------------------------------------------//
 const Register = () => {
     const [enteredFirstName, setEnteredFirstName] = useState('');
     const [enteredLastName, setEnteredLastName] = useState('');
@@ -11,8 +12,8 @@ const Register = () => {
     const [enteredConfirmPassword, setEnteredConfirmPassword] = useState('');
     const [enteredAccountNumber, setAccountNumber] = useState('');
     const [enteredIDNumber, setIDNumber] = useState('');
-    const [error, setError] = useState(''); // State for error message
-    const [successMessage, setSuccessMessage] = useState(''); // State for success message
+    const [error, setError] = useState(''); 
+    const [successMessage, setSuccessMessage] = useState(''); 
 
     const navigate = useNavigate();
 
@@ -42,7 +43,7 @@ const Register = () => {
                 const result = await response.json();
                 setSuccessMessage('User registered successfully!');
                 console.log('User registered successfully:', result);
-                navigate('/login'); // Use navigate to redirect to the login page
+                navigate('/login'); 
 
                 setEnteredFirstName('');
                 setEnteredLastName('');
@@ -162,6 +163,6 @@ const Register = () => {
         </div>
     );
 };
-
+//------------------------------------------------------//
 export default Register;
 //---------------------------------------------------END OF FILE------------------------//

@@ -8,12 +8,13 @@ import Login from './Pages/Login';
 import Dashboard from './Pages/Dashboard';
 import Test from './Pages/Test';
 import InternationalPayment from './Pages/InternationalPayments'
+import AddFunds from './Pages/AddFunds'
 //Router for navigation so if a new page is created add the path to this so that you can use links to access it 
 //-------------------------------------------------------//
   const router = createBrowserRouter([
     {
       path: "/",
-      element: <InternationalPayment/>,
+      element: <Register/>,
     },
     {
       path: "Dashboard",
@@ -27,6 +28,14 @@ import InternationalPayment from './Pages/InternationalPayments'
       path: "/test", 
       element: <Test />,
   },
+  {
+    path: "/internationalpayments", 
+    element: <InternationalPayment/>,
+},
+{
+  path: "/addfunds", 
+  element: <AddFunds/>,
+},
   ]);
 //-------------------------------------------------------//
 const rootElement = document.getElementById('root'); 
