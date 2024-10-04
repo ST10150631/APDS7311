@@ -68,7 +68,7 @@ const Register = () => {
     return (
         <div
             style={{
-                backgroundImage: `url(${process.env.PUBLIC_URL + '/images/background2.jpg'})`,
+                backgroundImage: `url(${process.env.PUBLIC_URL + '/images/background.jpg'})`,
                 backgroundRepeat: 'no-repeat',
                 backgroundPosition: 'center center',
                 backgroundSize: 'cover',

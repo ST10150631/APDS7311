@@ -3,6 +3,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const ExpressBrute = require("express-brute");
 const { User, Account } = require('./models'); // Import models from the new models file
+const checkAuth = require("../check-auth");
 
 const router = express.Router();
 const store = new ExpressBrute.MemoryStore(); 
@@ -52,5 +53,37 @@ router.post('/login', bruteforce.prevent, async (req, res) => {
     }
 });
 //------------------------------------------------------//
+
+// Protected route to get user data
+router.get('/user', checkAuth, async (req, res) => {
+    try {
+        const userId = req.user.id; // Extract user ID from verified token
+        const user = await User.findById(userId).select('-password'); // Exclude password from result
+        const account = await Account.findOne({ userId: user._id });
+
+        if (!user || !account) {
+            return res.status(404).send({ error: "User or account not found" });
+        }
+
+        res.status(200).send({
+            user: {
+                id: user._id,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                email: user.email,
+                username: user.username,
+                idNumber: user.idNumber,
+            },
+            account: {
+                accountNumber: account.accountNumber,
+                balance: account.balance,
+            }
+        });
+    } catch (error) {
+        console.error('Error fetching user data:', error);
+        res.status(500).send({ error: "Failed to retrieve user data" });
+    }
+});
+
 module.exports = router;
 //---------------------------------END OF FILE------------------------------//

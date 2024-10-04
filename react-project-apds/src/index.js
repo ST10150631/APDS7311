@@ -8,6 +8,7 @@ import Login from './Pages/Login';
 import Dashboard from './Pages/Dashboard';
 import Test from './Pages/Test';
 import InternationalPayment from './Pages/InternationalPayments'
+import LocalPayment from './Pages/LocalPayments';
 import AddFunds from './Pages/AddFunds'
 //Router for navigation so if a new page is created add the path to this so that you can use links to access it 
 //-------------------------------------------------------//
@@ -33,9 +34,13 @@ import AddFunds from './Pages/AddFunds'
     element: <InternationalPayment/>,
 },
 {
+  path: "/localpayments", 
+  element: <LocalPayment/>,
+},
+{
   path: "/addfunds", 
   element: <AddFunds/>,
-},
+}
   ]);
 //-------------------------------------------------------//
 const rootElement = document.getElementById('root'); 
