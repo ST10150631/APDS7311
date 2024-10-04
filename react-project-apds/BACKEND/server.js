@@ -18,7 +18,7 @@ connectToDatabase().catch(err => {
 let options;
 try {
     options = {
-        key: fs.readFileSync('./keys/key.pem'),     
+        key: fs.readFileSync('./keys/privatekey.pem'),     
         cert: fs.readFileSync('./keys/certificate.pem')
     };
     console.log("Keys added");
