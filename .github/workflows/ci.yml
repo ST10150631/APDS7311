@@ -19,7 +19,6 @@ jobs:
         image: mongo:4.4
         ports:
           - 27017:27017
-        options: --bind_ip_all
 
     strategy:
       matrix:
@@ -81,8 +80,7 @@ jobs:
           sleep 10
           curl -f http://localhost:3001 || exit 1
 
-
-    # Step 11: Check for protection against additional attacks
+      # Step 11: Check for protection against additional attacks
       - name: Security Attack Checks
         run: |
           # Check for Clickjacking Protection
@@ -115,10 +113,10 @@ jobs:
             echo "DDoS protection missing (express-rate-limit middleware)" && exit 1
           fi
 
-   # Step 12: Upload results 
+      # Step 12: Upload results 
       - name: Upload test results
         if: failure()
-        uses: actions/upload-artifact@v3  
+        uses: actions/upload-artifact@v3
         with:
           name: test-results
           path: ./test-results
