@@ -115,10 +115,10 @@ jobs:
             echo "DDoS protection missing (express-rate-limit middleware)" && exit 1
           fi
 
-    # Step 12: Upload results 
+   # Step 12: Upload results 
       - name: Upload test results
         if: failure()
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3  
         with:
           name: test-results
           path: ./test-results
