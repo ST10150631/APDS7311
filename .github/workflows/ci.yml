@@ -4,11 +4,9 @@ on:
   push:
     branches:
       - main
-      - master
   pull_request:
     branches:
       - main
-      - master
 
 jobs:
   build:
@@ -39,13 +37,13 @@ jobs:
       # Step 3: Install backend dependencies
       - name: Install backend dependencies
         run: |
-          cd backend
+          cd BACKEND
           npm install
 
       # Step 4: Install frontend dependencies
       - name: Install frontend dependencies
         run: |
-          cd frontend
+          cd src
           npm install
 
       # Step 5: Run ESLint to catch code quality issues
