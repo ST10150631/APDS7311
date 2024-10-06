@@ -9,6 +9,7 @@ import Dashboard from './Pages/Dashboard';
 import Test from './Pages/Test';
 import InternationalPayment from './Pages/InternationalPayments'
 import LocalPayment from './Pages/LocalPayments';
+import Transactions from './Pages/Transactions'
 import AddFunds from './Pages/AddFunds'
 //Router for navigation so if a new page is created add the path to this so that you can use links to access it 
 //-------------------------------------------------------//
@@ -16,6 +17,10 @@ import AddFunds from './Pages/AddFunds'
     {
       path: "/",
       element: <Register/>,
+    },
+    {
+      path: "Transactions",
+      element: <Transactions/>,
     },
     {
       path: "Dashboard",
