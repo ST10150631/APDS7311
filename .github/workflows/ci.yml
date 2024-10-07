@@ -82,13 +82,15 @@ jobs:
       # Step 13: Check for protection against additional attacks
       - name: Security Attack Checks
         run: |
+          cd react-project-apds 
+          
           # Check for Clickjacking Protection
-          if ! grep -q "frameguard" ./backend/app.js; then
+          if ! grep -q "frameguard" ./BACKEND/app.js; then
             echo "Clickjacking protection missing (Helmet's frameguard)" && exit 1
           fi
 
           # Check for Session Jacking Protection
-          if ! grep -q "cookie-session" ./backend/app.js; then
+          if ! grep -q "cookie-session" ./BACKEND/app.js; then
             echo "Session hijacking protection missing (cookie-session or express-session)" && exit 1
           fi
 
@@ -98,17 +100,17 @@ jobs:
           fi
 
           # Check for Cross-Site Scripting (XSS) Protection
-          if ! grep -q "xss-clean" ./backend/app.js; then
+          if ! grep -q "xss-clean" ./BACKEND/app.js; then
             echo "XSS protection missing (xss-clean middleware)" && exit 1
           fi
 
           # Check for Man-in-the-Middle Attack Protection
-          if ! grep -q "strict-transport-security" ./backend/app.js; then
+          if ! grep -q "strict-transport-security" ./BACKEND/app.js; then
             echo "HSTS header missing (use Helmet to enforce Strict-Transport-Security)" && exit 1
           fi
 
           # DDoS Protection (Rate Limiting and Network Throttling)
-          if ! grep -q "express-rate-limit" ./backend/app.js; then
+          if ! grep -q "express-rate-limit" ./BACKEND/app.js; then
             echo "DDoS protection missing (express-rate-limit middleware)" && exit 1
           fi
 
