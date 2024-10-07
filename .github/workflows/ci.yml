@@ -20,7 +20,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [14.x, 16.x]
+        node-version: [14.x, 16.x, 18.x]
 
     steps:
       # Step 1: Checkout the repository
@@ -41,16 +41,17 @@ jobs:
           cd BACKEND
           npm install
 
-      # Step 4: Install frontend dependencies
+     # Step 4: Install frontend dependencies
       - name: Install frontend dependencies
         run: |
-          cd react-project-apds
-          cd src
+          cd react-project-apds  
           npm install
 
       # Step 5: Build React App
       - name: Build React App
-        run: npm run build
+        run: |
+          cd react-project-apds  
+          npm run build
 
       # Step 6: Check for known vulnerabilities in dependencies
       - name: Run npm audit
