@@ -38,7 +38,21 @@ const AddFunds = () => {
     };
 
     return (
-        <div>
+        <div 
+        className='bgDashboard'
+        style={{
+            backgroundImage: `url(${process.env.PUBLIC_URL + '/images/BGLocal.jpg'})`,
+            backgroundRepeat: 'no-repeat',
+            backgroundPosition: 'center center',
+            backgroundSize: 'cover',
+            height: '100vh',
+            width: '100vw',
+            display: 'flex',
+            alignItems: 'center',
+            margin: '0',
+            padding: '0',
+            boxSizing: 'border-box',
+        }}>
             <div className='add-funds-container'>
                 <div className='form-container'>
                     <h1>Add Funds</h1>

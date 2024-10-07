@@ -12,6 +12,33 @@ const Dashboard = () => {
     const [loading, setLoading] = useState(true); 
 
     const navigate = useNavigate();
+    const [transactions, setTransactions] = useState([]); // State to hold transactions
+
+    useEffect(() => {
+        
+        const fetchTransactions = async () => {
+            try {
+                const response = await fetch('https://localhost:3001/payment/transactions', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token')}` 
+                    },
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    setTransactions(data);
+                } else {
+                    console.error("Failed to fetch transactions");
+                }
+            } catch (error) {
+                console.error("Error fetching transactions:", error);
+            }
+        };
+
+        fetchTransactions();
+    }, []); 
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -87,11 +114,11 @@ const Dashboard = () => {
                     <button className="nav-button" onClick={() => navigate('/Transactions')}>
                         Transactions
                     </button>
-                    <button className="nav-button" onClick={() => navigate('/payment-history')}>
-                        Payments
+                    <button className="nav-button" onClick={() => navigate('/localpayments')}>
+                        Local Payments
                     </button>
                     <button className="nav-button" onClick={() => navigate('/addfunds')}>
-                        Add Funds
+                        Deposit
                     </button>
                     <button className="nav-button" onClick={() => navigate('/InternationalPayments')}>
                         International Payments
@@ -141,16 +168,29 @@ const Dashboard = () => {
                     </div>
 
                     <h2>Payment Receipts</h2>
-                    <ul className="payment-list">
-                        <li>
-                            <span>2024/08/20 - Sch Fees - $200</span>
-                            <button className="button">Pay again</button>
-                        </li>
-                        <li>
-                            <span>2024/08/20 - Home R - $100</span>
-                            <button className="button">Pay again</button>
-                        </li>
-                    </ul>
+                     {/* Transaction Table */}
+                     <table className="transaction-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Recipient Name</th>
+                                <th>Recipient Bank</th>
+                                <th>Amount</th>
+                                <th>SWIFT Code</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {transactions.map((transaction, index) => (
+                                <tr key={index}>
+                                    <td>{new Date(transaction.date).toLocaleDateString()}</td>
+                                    <td>{transaction.recipientName}</td>
+                                    <td>{transaction.recipientsBank}</td>
+                                    <td>{transaction.amountToTransfer}</td>
+                                    <td>{transaction.swiftCode}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
                 </div>
             </div>
             <div className='Footer'>

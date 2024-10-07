@@ -38,12 +38,12 @@ class ValidationUtils {
         return this.validateAgainstBlacklist(idNumber);
     }
 
-    // Whitelist: Account number must be only numeric values, length 5-20
-    static validateAccountNumber(accountNumber) {
-        const accountNumberRegex = /^\d{5,20}$/;
-        return accountNumberRegex.test(accountNumber);
+   // Whitelist: Account number must be alphanumeric, length 5-20
+   static validateAccountNumber(accountNumber) {
+    const accountNumberRegex = /^[a-zA-Z0-9]{5,20}$/;
+    return accountNumberRegex.test(accountNumber);
     }
-
+    
     // Whitelist: Amount must be a positive number
     static validateAmount(amount) {
         return amount > 0;

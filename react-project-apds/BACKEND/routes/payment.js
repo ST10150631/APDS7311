@@ -48,7 +48,7 @@ router.post('/internationalpayment', checkAuth, async (req, res) => {
         // Deduct amount from sender's account
         senderAccount.balance -= amountToTransfer;
         await senderAccount.save();
-
+/*
         const recipientAccount = await Account.findOne({ accountNumber: recipientsAccountNumber });
         if (!recipientAccount) {
             return res.status(404).send({ error: "Recipient's account not found" });
@@ -57,7 +57,7 @@ router.post('/internationalpayment', checkAuth, async (req, res) => {
         // Add amount to recipient's account
         recipientAccount.balance += amountToTransfer;
         await recipientAccount.save();
-
+*/
         // Create a new transaction entry in the database
         const transaction = new Transaction({
             userId: sender._id, // Sender's user ID
@@ -74,7 +74,7 @@ router.post('/internationalpayment', checkAuth, async (req, res) => {
 
         res.status(201).send({ 
             senderNewBalance: senderAccount.balance, 
-            recipientNewBalance: recipientAccount.balance,
+            //recipientNewBalance: recipientAccount.balance,
             transactionId: transaction._id // Optional: send back transaction ID
         });
         console.log('Payment and transaction saved successfully');
