@@ -51,7 +51,7 @@ class ValidationUtils {
 
     // Whitelist: Allow any character for the SWIFT code, length 4 or 11
     static validateSwiftCode(swiftCode) {
-        const swiftCodeRegex = /^{4,11}$/i;
+        const swiftCodeRegex = /^.{4}$|^.{11}$/; 
         if (!swiftCodeRegex.test(swiftCode)) {
             return false;
         }

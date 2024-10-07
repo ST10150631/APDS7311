@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Logo from '../Img/SWIFT BANKING.png'
 
-
 const LocalPayment = () => {
     const navigate = useNavigate();
     const handleCancel = () => {
@@ -51,7 +50,22 @@ const LocalPayment = () => {
     };
 
     return (
-        <div className='bgPay'>
+        <div
+        className='bgDashboard'
+        style={{
+            backgroundImage: `url(${process.env.PUBLIC_URL + '/images/BGLocal.jpg'})`,
+            backgroundRepeat: 'no-repeat',
+            backgroundPosition: 'center center',
+            backgroundSize: 'cover',
+            height: '100vh',
+            width: '100vw',
+            display: 'flex',
+            alignItems: 'center',
+            margin: '0',
+            padding: '0',
+            boxSizing: 'border-box',
+        }}
+    >
                 <div className="TopNavbar">
         <img src={Logo} className="logo" alt="Logo" />
         <h1>Local Payment</h1>
