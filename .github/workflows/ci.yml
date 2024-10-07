@@ -58,7 +58,7 @@ jobs:
         run: |
           npm install react-scripts --legacy-peer-deps
         
-      # Step 10: Check SSL configuration
+      # Step 8: Check SSL configuration
       - name: Check SSL configuration
         run: |
           cd react-project-apds 
@@ -67,19 +67,19 @@ jobs:
             exit 1
           fi
 
-      # Step 3: Install HTTPie
+      # Step 9: Install HTTPie
       - name: Install HTTPie
         run: |
           pip install httpie
 
-      # Step 4: Start your backend server (if needed)
+      # Step 10: Start your backend server (if needed)
       - name: Start Backend Server
         run: |
           # Assuming you have a command to start your server, e.g.:
           nohup node ./BACKEND/server.js &  # Start server in the background
           sleep 5  # Wait for a few seconds to ensure the server is up
 
-      # Step 13: Check for protection against additional attacks
+      # Step 11: Check for protection against additional attacks
       - name: Security Attack Checks
         run: |
           cd react-project-apds 
@@ -127,7 +127,7 @@ jobs:
           fi
 
 
-      # Step 14: Upload results 
+      # Step 12: Upload results 
       - name: Upload test results
         if: failure()
         uses: actions/upload-artifact@v3
