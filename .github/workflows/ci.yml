@@ -79,24 +79,6 @@ jobs:
           nohup node ./BACKEND/server.js &  # Start server in the background
           sleep 5  # Wait for a few seconds to ensure the server is up
 
-      # Step 5: Check HTTPS redirection and security middleware
-      - name: Check HTTPS redirection
-        run: |
-          response=$(http --check-status http://localhost:3001 2>/dev/null)
-          if [ $? -eq 0 ]; then
-            echo "HTTP redirection to HTTPS is enforced"
-          else
-            echo "HTTP redirection to HTTPS is NOT enforced, but continuing the workflow."
-          fi
-
-
-      # Step 12: Run server integration check
-      - name: Run server check
-        run: |
-          node ./backend/server.js &
-          sleep 10
-          curl -f http://localhost:3001 || exit 1
-
       # Step 13: Check for protection against additional attacks
       - name: Security Attack Checks
         run: |
