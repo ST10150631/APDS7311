@@ -5,6 +5,8 @@ const ExpressBrute = require("express-brute");
 const { User, Account } = require('./models'); // Import models from the new models file
 const checkAuth = require("../check-auth");
 
+const ValidationUtils = require('../utils/validationUtils'); 
+
 const router = express.Router();
 const store = new ExpressBrute.MemoryStore(); 
 const bruteforce = new ExpressBrute(store);
@@ -12,6 +14,28 @@ const bruteforce = new ExpressBrute(store);
 // Handle the POST request for registration
 router.post('/register', async (req, res) => {
     const { firstName, lastName, email, username, password, idNumber } = req.body;
+
+    // Validate user inputs before proceeding
+    if (!ValidationUtils.validateName(firstName) || !ValidationUtils.validateName(lastName)) {
+        return res.status(400).send({ error: "Invalid first or last name. Use only letters." });
+    }
+
+    if (!ValidationUtils.validateEmail(email)) {
+        return res.status(400).send({ error: "Invalid email format." });
+    }
+
+    if (!ValidationUtils.validateUsername(username)) {
+        return res.status(400).send({ error: "Invalid username. Use only alphanumeric characters (3-20)." });
+    }
+
+    if (!ValidationUtils.validatePassword(password)) {
+        return res.status(400).send({ error: "Invalid password. Must be 8-30 characters with at least one letter and one number." });
+    }
+
+    if (!ValidationUtils.validateIDNumber(idNumber)) {
+        return res.status(400).send({ error: "Invalid South African ID number. Must be 13 digits." });
+    }
+
     try {
         const accountNumber = 'AC' + Math.floor(1000000000 + Math.random() * 9000000000);
         const hashedPassword = await bcrypt.hash(password, 10);
@@ -34,6 +58,15 @@ router.post('/register', async (req, res) => {
 // Handle the POST request for login with brute force protection
 router.post('/login', bruteforce.prevent, async (req, res) => {
     const { username, password } = req.body;
+
+    // Validate username and password
+    if (!ValidationUtils.validateUsername(username)) {
+        return res.status(400).send({ error: "Invalid username format." });
+    }
+
+    if (!ValidationUtils.validatePassword(password)) {
+        return res.status(400).send({ error: "Invalid password format." });
+    }
 
     try {
         const user = await User.findOne({ username });

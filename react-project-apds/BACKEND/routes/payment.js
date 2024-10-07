@@ -2,10 +2,33 @@ const express = require("express");
 const { User, Account,Transaction} = require('./models'); // Import the User and Account models
 const checkAuth = require('../check-auth'); // Import your authentication middleware
 
+const ValidationUtils = require('../utils/validationUtils'); 
+
 const router = express.Router();
 //------------------------------------------------------//
 router.post('/internationalpayment', checkAuth, async (req, res) => {
     const { recipientName, recipientsBank, recipientsAccountNumber, amountToTransfer, swiftCode } = req.body;
+
+    // Validate inputs before proceeding
+    if (!ValidationUtils.validateName(recipientName)) {
+        return res.status(400).send({ error: "Invalid recipient name. It must contain only letters and be between 1 and 50 characters." });
+    }
+
+    if (!ValidationUtils.validateName(recipientsBank)) {
+        return res.status(400).send({ error: "Invalid recipient bank. It must contain only letters and be between 1 and 50 characters." });
+    }
+
+    if (!ValidationUtils.validateAccountNumber(recipientsAccountNumber)) {
+        return res.status(400).send({ error: "Invalid recipient account number." });
+    }
+
+    if (!ValidationUtils.validateAmount(amountToTransfer)) {
+        return res.status(400).send({ error: "Invalid amount. It must be a positive number." });
+    }
+
+    if (!ValidationUtils.validateSwiftCode(swiftCode)) {
+        return res.status(400).send({ error: "Invalid SWIFT code. It must be 8 or 11 alphanumeric characters." });
+    }    
 
     try {
         const sender = await User.findById(req.user.id); // Get user ID from the token
@@ -64,6 +87,10 @@ router.post('/internationalpayment', checkAuth, async (req, res) => {
 // Handle the POST request to add balance to the user's account
 router.post('/add-balance', checkAuth, async (req, res) => {
     const { amount } = req.body; 
+
+    if (!ValidationUtils.validateAmount(amount)) {
+        return res.status(400).send({ error: "Invalid amount. Please enter a valid number." });
+    }
 
     try {
         
