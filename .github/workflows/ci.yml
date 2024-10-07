@@ -60,7 +60,7 @@ jobs:
 
       # Step 9: Check for known vulnerabilities in dependencies
       - name: Run npm audit
-        run: npm audit --audit-level=high
+        run: npm audit
         
       # Step 10: Check SSL configuration
       - name: Check SSL configuration
