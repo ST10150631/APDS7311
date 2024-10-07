@@ -67,18 +67,27 @@ jobs:
             exit 1
           fi
 
-      # In your setup step, add this
+      # Step 3: Install HTTPie
       - name: Install HTTPie
         run: |
           pip install httpie
 
-      # Step 11: Check HTTPS redirection and security middleware
+      # Step 4: Start your backend server (if needed)
+      - name: Start Backend Server
+        run: |
+          # Assuming you have a command to start your server, e.g.:
+          nohup node ./BACKEND/server.js &  # Start server in the background
+          sleep 5  # Wait for a few seconds to ensure the server is up
+
+      # Step 5: Check HTTPS redirection and security middleware
       - name: Check HTTPS redirection
         run: |
-          response=$(http --check-status http://localhost:3000)
+          response=$(http --check-status http://localhost:3001)
           if [[ $? -ne 0 ]]; then
             echo "HTTP redirection to HTTPS not enforced"
             exit 1
+          else
+            echo "HTTP redirection to HTTPS is enforced"
           fi
 
       # Step 12: Run server integration check
