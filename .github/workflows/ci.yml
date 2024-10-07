@@ -61,9 +61,11 @@ jobs:
       # Step 10: Check SSL configuration
       - name: Check SSL configuration
         run: |
-          if [ ! -f ./keys/privatekey.pem ] || [ ! -f ./keys/certificate.pem ]; then
-            echo "SSL certificate or key missing" && exit 1
+          if [ ! -f ./BACKEND/keys/privatekey.pem ] || [ ! -f ./BACKEND/keys/certificate.pem ]; then
+            echo "SSL certificate or key missing"
+            exit 1
           fi
+
 
       # Step 11: Check HTTPS redirection and security middleware
       - name: Check HTTPS redirection
