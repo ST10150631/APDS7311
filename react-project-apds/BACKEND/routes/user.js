@@ -38,15 +38,30 @@ router.post('/register', async (req, res) => {
 
     try {
         const accountNumber = 'AC' + Math.floor(1000000000 + Math.random() * 9000000000);
-        const hashedPassword = await bcrypt.hash(password, 10);
-        const user = new User({ firstName, lastName, email, username, password: hashedPassword, idNumber });
+
+        // Generate a salt and hash the password with the salt
+        const salt = await bcrypt.genSalt(10);  // 10 rounds of salt
+        const hashedPassword = await bcrypt.hash(password, salt);
+
+        const user = new User({ 
+            firstName, 
+            lastName, 
+            email, 
+            username, 
+            password: hashedPassword, 
+            idNumber 
+        });
+        
         const savedUser = await user.save();
+
         const account = new Account({
             userId: savedUser._id,
-            accountNumber,         
-            balance: 0.0           
+            accountNumber,
+            balance: 0.0
         });
+
         const savedAccount = await account.save();
+
         res.status(201).send({ user: savedUser, account: savedAccount });
         console.log('User registered and account created successfully:', savedUser, savedAccount);
     } catch (error) {
@@ -54,28 +69,40 @@ router.post('/register', async (req, res) => {
         res.status(400).send({ error: "Failed to register user or create account" });
     }
 });
+
 //------------------------------------------------------//
 // Handle the POST request for login with brute force protection
 router.post('/login', bruteforce.prevent, async (req, res) => {
     const { username, password } = req.body;
 
     try {
+        // Find user by username
         const user = await User.findOne({ username });
         if (!user) {
             return res.status(401).send({ error: "Invalid username or password" });
         }
+
+        // Compare the provided password with the hashed password in the database
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
             return res.status(401).send({ error: "Invalid username or password" });
         }
+
+        // Generate a JWT for the user
         const token = jwt.sign({ id: user._id, username: user.username }, 'this_secret_should_be_longer_than_it_is', { expiresIn: '1h' });
+
+        // Find the user's account information
         const account = await Account.findOne({ userId: user._id });
+
+        // Respond with the token, user info, and account details
         res.status(200).send({ token, user: { id: user._id, username: user.username }, account });
     } catch (error) {
         console.error('Error logging in user:', error);
         res.status(500).send({ error: "Internal server error" });
     }
 });
+
+
 //------------------------------------------------------//
 
 // Protected route to get user data
