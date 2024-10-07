@@ -41,42 +41,43 @@ jobs:
           cd BACKEND
           npm install
 
-     # Step 4: Install frontend dependencies
+      # Step 4: Install frontend dependencies
       - name: Install frontend dependencies
         run: |
           cd react-project-apds  
-          npm install
+          npm install --legacy-peer-deps
 
-    # Ensure react-scripts is installed
+      # Step 5: Ensure react-scripts is installed
       - name: Ensure react-scripts is installed
         run: |
          npm install react-scripts
-     
-     # Install missing Babel plugin
+
+      # Step 6: Install missing Babel plugin
       - name: Install missing Babel plugin
         run: npm install --save-dev @babel/plugin-proposal-private-property-in-object
 
-      # Deduplicate eslint-config-react-app
+      # Step 7: Deduplicate eslint-config-react-app
       - name: Deduplicate eslint-config-react-app
         run: npx npm dedupe
 
-      # Install eslint-config-react-app explicitly
+      # Step 8: Install eslint-config-react-app explicitly
       - name: Install eslint-config-react-app
-        run: npm install --save-dev eslint-config-react-app
+        run: npm install --save-dev eslint-config-react-app --legacy-peer-deps
 
-      # Fix permissions for node_modules
+      # Step 9: Fix permissions for node_modules
       - name: Fix permissions for node_modules
         run: sudo chown -R $USER:$GROUP ./node_modules
-     
-      # Step 5: Build React App
+
+      # Step 10: Build React App
       - name: Build React App
         run: |
           cd react-project-apds  
           npm run build
 
-      # Step 6: Check for known vulnerabilities in dependencies
+      # Step 11: Check for known vulnerabilities in dependencies
       - name: Run npm audit
         run: npm audit --audit-level=high
+
 
       # Step 7: Check SSL configuration
       - name: Check SSL configuration
