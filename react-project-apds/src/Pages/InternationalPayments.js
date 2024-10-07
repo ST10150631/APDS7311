@@ -50,7 +50,21 @@ const InternationalPayments = () => {
     };
 
     return (
-        <div className='bgPay'>
+        <div 
+        className='bgDashboard'
+        style={{
+            backgroundImage: `url(${process.env.PUBLIC_URL + '/images/BGInternational.jpg'})`,
+            backgroundRepeat: 'no-repeat',
+            backgroundPosition: 'center center',
+            backgroundSize: 'cover',
+            height: '100vh',
+            width: '100vw',
+            display: 'flex',
+            alignItems: 'center',
+            margin: '0',
+            padding: '0',
+            boxSizing: 'border-box',
+        }}>
                 <div className="TopNavbar">
         <img src={Logo} className="logo" alt="Logo" />
         <h1>International Payment</h1>
