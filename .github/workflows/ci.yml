@@ -58,12 +58,6 @@ jobs:
         run: |
           npm install react-scripts --legacy-peer-deps
 
-      # Step 8: Add missing babel plugin and disable ESLint in CI
-      - name: Install missing babel plugin and build
-        run: |
-          npm install --save-dev @babel/plugin-proposal-private-property-in-object --legacy-peer-deps
-          CI=false npm run build
-
       # Step 9: Check for known vulnerabilities in dependencies
       - name: Run npm audit
         run: npm audit --audit-level=high
