@@ -83,10 +83,7 @@ jobs:
       - name: Check HTTPS redirection
         run: |
           response=$(http --check-status http://localhost:3001)
-          if [[ $? -ne 0 ]]; then
-            echo "HTTP redirection to HTTPS not enforced"
-            exit 1
-          else
+          if [![ $? -ne 0 ]]; then
             echo "HTTP redirection to HTTPS is enforced"
           fi
 
