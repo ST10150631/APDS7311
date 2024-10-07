@@ -23,7 +23,7 @@ jobs:
         node-version: [16.x, 18.x]
 
     steps:
-       # Step 1: Checkout the repository
+      # Step 1: Checkout the repository
       - name: Checkout code
         uses: actions/checkout@v3
 
@@ -36,8 +36,7 @@ jobs:
       # Step 3: Install backend dependencies
       - name: Install backend dependencies
         run: |
-          cd react-project-apds
-          cd BACKEND
+          cd react-project-apds/BACKEND
           npm install
 
       # Step 4: Fix permissions for node_modules and binaries
@@ -60,7 +59,7 @@ jobs:
           npm install react-scripts --legacy-peer-deps
 
       # Step 8: Add missing babel plugin and disable ESLint in CI
-      - name: Install missing babel plugin and ignore ESLint warnings in CI
+      - name: Install missing babel plugin and build
         run: |
           npm install --save-dev @babel/plugin-proposal-private-property-in-object
           CI=false npm run build
@@ -69,28 +68,28 @@ jobs:
       - name: Run npm audit
         run: npm audit --audit-level=high
         
-      # Step 7: Check SSL configuration
+      # Step 10: Check SSL configuration
       - name: Check SSL configuration
         run: |
           if [ ! -f ./keys/privatekey.pem ] || [ ! -f ./keys/certificate.pem ]; then
             echo "SSL certificate or key missing" && exit 1
           fi
 
-      # Step 8: Check HTTPS redirection and security middleware
+      # Step 11: Check HTTPS redirection and security middleware
       - name: Check HTTPS redirection
         run: |
           if ! curl -s -o /dev/null -w "%{http_code}" https://localhost:3001 | grep -q "301"; then
             echo "HTTPS redirection not enforced" && exit 1
           fi
 
-      # Step 9: Run server integration check
+      # Step 12: Run server integration check
       - name: Run server check
         run: |
           node ./backend/server.js &
           sleep 10
           curl -f http://localhost:3001 || exit 1
 
-      # Step 10: Check for protection against additional attacks
+      # Step 13: Check for protection against additional attacks
       - name: Security Attack Checks
         run: |
           # Check for Clickjacking Protection
@@ -123,7 +122,7 @@ jobs:
             echo "DDoS protection missing (express-rate-limit middleware)" && exit 1
           fi
 
-      # Step 11: Upload results 
+      # Step 14: Upload results 
       - name: Upload test results
         if: failure()
         uses: actions/upload-artifact@v3
