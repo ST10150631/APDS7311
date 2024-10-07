@@ -5,33 +5,23 @@
     border: none;
     height: 100px;
     margin: 10px;
-    width: 300px;
+    width: 300px; /* Width of the buttons */
     padding: 10px 20px;
     font-size: 16px;
     cursor: pointer;
 }
+
 .button:hover {
     background-color: #0466c8;
     transform: scale(1.05);
     transition: 0.3s ease;
 }
-.bgDashboard{
+
+.bgDashboard {
     height: 2000px;
     width: 100%;
     margin-top: 0px;
-    background: linear-gradient(180deg, #034078, #0a1128); /* Apply gradient to the entire background */
-   
-}
-.bgPay{
-    height: 2000px;
-    width: 100%;
-    margin-top: 0px;
-    background: linear-gradient(180deg, #034078, #0a1128); /* Apply gradient to the entire background */
-    padding-top: 80px;
-}
-.dashboard-container {
-    display: flex;
-    
+    background: linear-gradient(180deg, #034078, #0a1128); /* Gradient for the entire background */
 }
 
 .TopNavbar {
@@ -69,35 +59,23 @@
     overflow: hidden;
 }
 
-.sidebar {
-    width: 200px;
-    border-right: 1px solid #ccc;
-    background-color: #034078;
-    padding: 10px;
-    color: white;
+.dashboard-container {
+    display: flex; /* Use flexbox for the layout */
 }
 
-.nav-list {
-    list-style-type: none;
-    padding: 0;
-}
-
-.nav-list li {
-    margin-bottom: 10px;
-}
-
-.nav-list a {
-    color: white;
-    text-decoration: none;
+.navbar {
+    flex: 0 0 200px; /* Fixed width for navbar */
+    background-color: #034078; /* Background color for navbar */
+    padding: 10px; /* Padding for the navbar */
+    color: white; /* Text color */
 }
 
 .main-content {
-    margin-left: 180px;
-    padding: 20px;
-    border-radius: 15px;
-    margin-right: 180px;
-    background-color: aliceblue;
-    flex: 1;
+     /* Main content takes the remaining space */
+    padding: 20px; /* Padding for main content */
+    background-color: aliceblue; /* Background color for main content */
+    border-radius: 15px; /* Rounded corners */
+    margin-left: 300px; /* Optional space between navbar and main content */
 }
 
 .banking-details-container {

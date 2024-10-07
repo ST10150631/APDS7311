@@ -1,10 +1,9 @@
 const express = require("express");
-const { User, Account } = require('./models'); // Import the User and Account models
+const { User, Account,Transaction} = require('./models'); // Import the User and Account models
 const checkAuth = require('../check-auth'); // Import your authentication middleware
 
 const router = express.Router();
 //------------------------------------------------------//
-// Handle the POST request for international payment
 router.post('/internationalpayment', checkAuth, async (req, res) => {
     const { recipientName, recipientsBank, recipientsAccountNumber, amountToTransfer, swiftCode } = req.body;
 
@@ -23,6 +22,7 @@ router.post('/internationalpayment', checkAuth, async (req, res) => {
             return res.status(400).send({ error: "Insufficient balance" });
         }
 
+        // Deduct amount from sender's account
         senderAccount.balance -= amountToTransfer;
         await senderAccount.save();
 
@@ -31,11 +31,30 @@ router.post('/internationalpayment', checkAuth, async (req, res) => {
             return res.status(404).send({ error: "Recipient's account not found" });
         }
 
+        // Add amount to recipient's account
         recipientAccount.balance += amountToTransfer;
         await recipientAccount.save();
 
-        res.status(201).send({ senderNewBalance: senderAccount.balance, recipientNewBalance: recipientAccount.balance });
-        console.log('Payment successful');
+        // Create a new transaction entry in the database
+        const transaction = new Transaction({
+            userId: sender._id, // Sender's user ID
+            recipientName,
+            recipientsBank,
+            recipientsAccountNumber,
+            amountToTransfer,
+            swiftCode,
+            date: new Date() // Current date
+        });
+
+        // Save the transaction
+        await transaction.save();
+
+        res.status(201).send({ 
+            senderNewBalance: senderAccount.balance, 
+            recipientNewBalance: recipientAccount.balance,
+            transactionId: transaction._id // Optional: send back transaction ID
+        });
+        console.log('Payment and transaction saved successfully');
     } catch (error) {
         console.error('Error processing payment:', error);
         res.status(400).send({ error: "Failed to process payment" });
@@ -63,5 +82,40 @@ router.post('/add-balance', checkAuth, async (req, res) => {
     }
 });
 //------------------------------------------------------//
+// Handle GET request to fetch transaction history for the logged-in user
+router.get('/transactions', checkAuth, async (req, res) => {
+    try {
+        const user = await User.findById(req.user.id); // Get user ID from token
+        if (!user) {
+            return res.status(404).send({ error: "User not found" });
+        }
+
+        // Fetch transactions for the logged-in user, sorted by date
+        const transactions = await Transaction.find({ userId: user._id }).sort({ date: -1 });
+        res.status(200).json(transactions); // Send back the transactions as JSON
+    } catch (error) {
+        console.error('Error fetching transactions:', error);
+        res.status(500).send({ error: "Failed to fetch transactions" });
+    }
+});
+
+
+// Handle GET request to fetch transaction history for the logged-in user
+router.get('/transactions', checkAuth, async (req, res) => {
+    try {
+        const user = await User.findById(req.user.id); // Get user ID from token
+        if (!user) {
+            return res.status(404).send({ error: "User not found" });
+        }
+
+        // Fetch transactions for the logged-in user, sorted by date
+        const transactions = await Transaction.find({ userId: user._id }).sort({ date: -1 });
+        res.status(200).json(transactions); // Send back the transactions as JSON
+    } catch (error) {
+        console.error('Error fetching transactions:', error);
+        res.status(500).send({ error: "Failed to fetch transactions" });
+    }
+});
+
 module.exports = router;
 //----------------------------------END OF FILE---------------------------//

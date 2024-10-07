@@ -3,8 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import '../index.css';
 import bannerImage from '../Img/skyscrapers.jpeg';
 import Logo from '../Img/SWIFT BANKING.png';
-import card from '../Img/Swift Card.png';
-
+import './styles/Navbar.css';
 const Dashboard = () => {
     const [customerName, setCustomerName] = useState('');
     const [accountNumber, setAccountNumber] = useState('');
@@ -51,8 +50,13 @@ const Dashboard = () => {
     }, [navigate]);
 
     const handleLocalPayment = () => {
-        navigate('/LocalPayments');
+        navigate('/AddFunds');
     };
+
+    const handleTransactions = () => {
+        navigate('/Transactions');
+    };
+
 
     const handleInternationalPayment = () => {
         navigate('/InternationalPayments');
@@ -74,13 +78,21 @@ const Dashboard = () => {
             </div>
 
             <div className="dashboard-container">
-                <nav className="sidebar">
-                    <h2>Menu</h2>
-                    <ul className="nav-list">
-                        <li><Link to="/view-transactions">Transactions</Link></li>
-                        <li><Link to="/payment-history">Payments</Link></li>
-                    </ul>
-                </nav>
+                {/* Side Menu */}
+                <div className="navbar">
+                    <button className="nav-button" onClick={() => navigate('/Transactions')}>
+                        Transactions
+                    </button>
+                    <button className="nav-button" onClick={() => navigate('/payment-history')}>
+                        Payments
+                    </button>
+                    <button className="nav-button" onClick={() => navigate('/AddFunds')}>
+                        Add Funds
+                    </button>
+                    <button className="nav-button" onClick={() => navigate('/InternationalPayments')}>
+                        International Payments
+                    </button>
+                </div>
 
                 <div className="main-content">
                     <h2>Hello, {customerName}</h2>

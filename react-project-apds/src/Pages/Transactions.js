@@ -1,14 +1,38 @@
-import React, { useState, useEffect } from 'react'; // Added useEffect
+import React, { useState, useEffect } from 'react'; 
 import { Link, useNavigate } from 'react-router-dom';
 import '../index.css';
 import bannerImage from '../Img/Digital-Transactions.jpg';
 import Logo from '../Img/SWIFT BANKING.png';
-
+import './styles/TransactionTable.css'
 const Dashboard = () => {
-   
+    const [transactions, setTransactions] = useState([]); // State to hold transactions
     const navigate = useNavigate();
 
+    useEffect(() => {
+        
+        const fetchTransactions = async () => {
+            try {
+                const response = await fetch('https://localhost:3001/payment/transactions', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token')}` 
+                    },
+                });
 
+                if (response.ok) {
+                    const data = await response.json();
+                    setTransactions(data);
+                } else {
+                    console.error("Failed to fetch transactions");
+                }
+            } catch (error) {
+                console.error("Error fetching transactions:", error);
+            }
+        };
+
+        fetchTransactions();
+    }, []); 
 
     return (
         <div className="bgDashboard">
@@ -23,29 +47,52 @@ const Dashboard = () => {
 
             <div className="dashboard-container">
                 {/* Side Menu */}
-                <nav className="sidebar">
-                    <h2>Menu</h2>
-                    <ul className="nav-list">
-                        <li><Link to="/view-transactions">Dashboard</Link></li>
-                        <li><Link to="/payment-history">Payments</Link></li>
-                    </ul>
-                </nav>
+               
+                {/* Side Menu */}
+                <div className="navbar">
+                    <button className="nav-button" onClick={() => navigate('/Transactions')}>
+                        Transactions
+                    </button>
+                    <button className="nav-button" onClick={() => navigate('/payment-history')}>
+                        Payments
+                    </button>
+                    <button className="nav-button" onClick={() => navigate('/AddFunds')}>
+                        Add Funds
+                    </button>
+                    <button className="nav-button" onClick={() => navigate('/InternationalPayments')}>
+                        International Payments
+                    </button>
+                </div>
 
                 {/* Main Content */}
-                <div className="main-content">
+                <div className="main-table-content">
                     <h2>Hello, Mike</h2>
 
-                    <h2>Transactions</h2>
-                    <ul className="payment-list">
-                        <li>
-                            <span>2024/08/20 - Sch Fees - $200</span>
-                            <button className="button">Pay again</button>
-                        </li>
-                        <li>
-                            <span>2024/08/20 - Home R - $100</span>
-                            <button className="button">Pay again</button>
-                        </li>
-                    </ul>
+                    <h2>Transaction History</h2>
+
+                    {/* Transaction Table */}
+                    <table className="transaction-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Recipient Name</th>
+                                <th>Recipient Bank</th>
+                                <th>Amount</th>
+                                <th>SWIFT Code</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {transactions.map((transaction, index) => (
+                                <tr key={index}>
+                                    <td>{new Date(transaction.date).toLocaleDateString()}</td>
+                                    <td>{transaction.recipientName}</td>
+                                    <td>{transaction.recipientsBank}</td>
+                                    <td>{transaction.amountToTransfer}</td>
+                                    <td>{transaction.swiftCode}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
@@ -53,3 +100,4 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+//-------------------------------------END OF FILE-----------------------------------//

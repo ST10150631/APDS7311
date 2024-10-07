@@ -1,5 +1,17 @@
 const mongoose = require("mongoose");
 
+const transactionSchema = new mongoose.Schema({
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    recipientName: String,
+    recipientsBank: String,
+    recipientsAccountNumber: String,
+    amountToTransfer: Number,
+    swiftCode: String,
+    date: { type: Date, default: Date.now }
+});
+
+const Transaction = mongoose.model('Transaction', transactionSchema);
+
 // User Schema for MongoDB
 const UserSchema = new mongoose.Schema({
     firstName: String,
@@ -21,5 +33,5 @@ const AccountSchema = new mongoose.Schema({
 
 const Account = mongoose.model('Account', AccountSchema);
 
-module.exports = { User, Account };
+module.exports = { User, Account ,Transaction};
 //-------------------------------END OF FILE--------------------//
