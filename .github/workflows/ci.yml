@@ -75,7 +75,7 @@ jobs:
       # Step 11: Check HTTPS redirection and security middleware
       - name: Check HTTPS redirection
         run: |
-          response=$(http --check-status http://localhost:3001)
+          response=$(http --check-status http://localhost:3000)
           if [[ $? -ne 0 ]]; then
             echo "HTTP redirection to HTTPS not enforced"
             exit 1
