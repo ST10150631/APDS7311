@@ -83,7 +83,7 @@ const Login = () => {
                 {error && <p className="error-message">{error}</p>}
                 {successMessage && <p className="success-message">{successMessage}</p>}
                 <p className="login-message">
-                    Don't have an account? <Link to="/register" className="login-link">Register here</Link>
+                    Don't have an account? <Link to="/" className="login-link">Register here</Link>
                 </p>
             </div>
         </div>

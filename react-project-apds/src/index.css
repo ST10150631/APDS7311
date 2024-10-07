@@ -100,9 +100,31 @@
     flex: 1;
 }
 
-.banking-details {
-    margin-top: 20px;
+.banking-details-container {
+    position: relative;
+    display: flex; /* Use flexbox to align items */
+    align-items: top; /* Center items vertically */
+    margin-bottom: 5px;
+    margin-left: 5px; /* Space around the container */
 }
+
+.banking-logo {
+    width: 300px; /* Fixed width for the card */
+    height: auto; /* Maintain aspect ratio */
+    margin-right: 20px; /* Space between card and details */
+}
+
+.banking-details {
+    position: absolute;
+    top: 25px; /* Positioning within the card */
+    left:40px; /* Positioning within the card */
+    color: white; /* Text color */
+    padding: 10px; /* Padding for better spacing */
+    border-radius: 8px; /* Rounded corners */
+    width: 90%; /* Width of the overlay */
+}
+
+
 
 .payment-list {
     list-style-type: none;

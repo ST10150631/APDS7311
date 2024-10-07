@@ -55,7 +55,7 @@ router.post('/login', bruteforce.prevent, async (req, res) => {
 //------------------------------------------------------//
 
 // Protected route to get user data
-router.get('/user', checkAuth, async (req, res) => {
+router.get('/getUser', checkAuth, async (req, res) => {
     try {
         const userId = req.user.id; // Extract user ID from verified token
         const user = await User.findById(userId).select('-password'); // Exclude password from result
