@@ -20,7 +20,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [14.x, 16.x, 18.x]
+        node-version: [16.x, 18.x]
 
     steps:
       # Step 1: Checkout the repository
@@ -46,6 +46,11 @@ jobs:
         run: |
           cd react-project-apds  
           npm install
+
+    # Ensure react-scripts is installed
+      - name: Ensure react-scripts is installed
+        run: |
+         npm install react-scripts
 
       # Step 5: Build React App
       - name: Build React App
