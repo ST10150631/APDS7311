@@ -1,30 +1,28 @@
-import React, { useState, useEffect } from 'react'; // Added useEffect
+import React, { useState, useEffect } from 'react'; 
 import { Link, useNavigate } from 'react-router-dom';
 import '../index.css';
 import bannerImage from '../Img/skyscrapers.jpeg';
 import Logo from '../Img/SWIFT BANKING.png';
+import card from '../Img/Swift Card.png'
 import './styles/Navbar.css';
 const Dashboard = () => {
     const [customerName, setCustomerName] = useState('');
     const [accountNumber, setAccountNumber] = useState('');
     const [availableBalance, setAvailableBalance] = useState('');
-    const [loading, setLoading] = useState(true); // Added loading state
+    const [loading, setLoading] = useState(true); 
 
     const navigate = useNavigate();
 
-    // Fetch user data when the component mounts
     useEffect(() => {
         const fetchUserData = async () => {
-            const token = localStorage.getItem('token'); // Get the token from localStorage
-
+            const token = localStorage.getItem('token'); 
             if (!token) {
-                // If no token is available, redirect to the login page
                 navigate('/login');
                 return;
             }
 
             try {
-                const response = await fetch('https://localhost:3001/user', {
+                const response = await fetch('https://localhost:3001/user/getUser', {
                     method: 'GET',
                     headers: {
                         'Authorization': `Bearer ${token}`,
@@ -34,27 +32,24 @@ const Dashboard = () => {
 
                 if (response.ok) {
                     const result = await response.json();
-                    setCustomerName(result.user.firstName + ' ' + result.user.lastName); // Set customer name
-                    setAccountNumber(result.account.accountNumber); // Set account number
-                    setAvailableBalance(`$${result.account.balance.toFixed(2)}`); // Set balance
+                    setCustomerName(`${result.user.firstName} ${result.user.lastName}`);
+                    setAccountNumber(result.account.accountNumber);
+                    setAvailableBalance(`$${result.account.balance.toFixed(2)}`);
                 } else {
-                    console.error('Failed to fetch user data');
-                    // Optionally handle unauthorized access
                     if (response.status === 401) {
-                        navigate('/login'); // Redirect to login if unauthorized
+                        navigate('/login');
                     }
                 }
             } catch (error) {
                 console.error('Error:', error);
             } finally {
-                setLoading(false); // Data has been loaded
+                setLoading(false);
             }
         };
 
         fetchUserData();
-    }, [navigate]); // Added navigate to dependency array
+    }, [navigate]);
 
-    // Handlers for button clicks to navigate
     const handleLocalPayment = () => {
         navigate('/AddFunds');
     };
@@ -69,7 +64,7 @@ const Dashboard = () => {
     };
 
     if (loading) {
-        return <div>Loading...</div>; // Show loading message while data is being fetched
+        return <div>Loading...</div>; 
     }
 
     return (
@@ -100,7 +95,6 @@ const Dashboard = () => {
                     </button>
                 </div>
 
-                {/* Main Content */}
                 <div className="main-content">
                     <h2>Hello, {customerName}</h2>
 
@@ -114,13 +108,32 @@ const Dashboard = () => {
                         </button>
                     </div>
                     <h2>Banking Details</h2>
-                    <div className="banking-details">
+                    <div >
                         <strong>Current Account</strong>
                         <div>
                             <span>Acc No: {accountNumber}</span>
                         </div>
                         <div>
                             <span>Available Balance: {availableBalance}</span>
+                        </div>
+                    </div>
+                    
+                    <h2>My Cards</h2>
+
+                    {/* Updated banking details section */}
+                    <div className="banking-details-container">
+                        <img src={card} alt="Swift Banking" className="banking-logo" />
+                        <div className="banking-details">
+                            <strong>Current Account</strong>
+                            <div>
+                                <span>Name: {customerName}</span>
+                            </div>
+                            <div>
+                                <span>Acc No: {accountNumber}</span>
+                            </div>
+                            <div>
+                                <span>Available Balance: {availableBalance}</span>
+                            </div>
                         </div>
                     </div>
 
