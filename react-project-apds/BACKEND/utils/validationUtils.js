@@ -49,9 +49,9 @@ class ValidationUtils {
         return amount > 0;
     }
 
-   // Whitelist: Allow any character for the SWIFT code, length 8 or 11 alphanumeric characters
+   // Whitelist: Allow any character for the SWIFT code, length 8 - 11 alphanumeric characters
     static validateSwiftCode(swiftCode) {
-        const swiftCodeRegex = /^[a-zA-Z0-9]{8}|[a-zA-Z0-9]{11}$/;
+        const swiftCodeRegex = /^[A-Za-z0-9]{8,11}$/i;
         return swiftCodeRegex.test(swiftCode);
     }
 
