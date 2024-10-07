@@ -40,30 +40,26 @@ jobs:
           cd BACKEND
           npm install
 
-      # Step 4: Install frontend dependencies
+      # Step 4: Fix permissions for node_modules and binaries
+      - name: Fix permissions for node_modules and binaries
+        run: sudo chown -R $USER:$GROUP ./react-project-apds/node_modules
+
+      # Step 5: Ensure react-scripts execution permissions
+      - name: Ensure react-scripts execution permissions
+        run: chmod +x ./react-project-apds/node_modules/.bin/react-scripts
+
+      # Step 6: Install frontend dependencies
       - name: Install frontend dependencies
         run: |
           cd react-project-apds  
           npm install --legacy-peer-deps
 
-      # Step 5: Ensure react-scripts is installed
+      # Step 7: Ensure react-scripts is installed
       - name: Ensure react-scripts is installed
         run: |
           npm install react-scripts --legacy-peer-deps
 
-      # Step 6: Install missing Babel plugin
-      - name: Install missing Babel plugin
-        run: npm install --save-dev @babel/plugin-proposal-private-property-in-object
-
-      # Step 7: Deduplicate eslint-config-react-app
-      - name: Deduplicate eslint-config-react-app
-        run: npx npm dedupe
-
-      # Step 8: Remove root node_modules
-      - name: Remove root node_modules
-        run: rm -rf /home/runner/work/APDS7311/APDS7311/node_modules
-
-      # Step 9: Build React App
+      # Step 8: Build React App
       - name: Build React App
         run: |
           cd react-project-apds  
