@@ -18,7 +18,8 @@
 }
 
 .bgDashboard {
-    height: 2000px;
+    min-height: 100vh;
+    flex-direction: column; /* Align children in a column */
     width: 100%;
     margin-top: 0px;
     background: linear-gradient(180deg, #034078, #0a1128); /* Gradient for the entire background */
@@ -33,6 +34,19 @@
     width: 100%;
     height: 80px;
     position: relative; /* To use absolute positioning for the logo */
+}
+.Footer {
+    display:flex;
+    flex: 1;
+    margin-top: 20%;
+    margin-bottom: 0;
+    align-items: center;
+    justify-content: center; /* Centers the h1 text */
+    background-color: #044060;
+    color: white;
+    width: 100%;
+    height: 80px;
+    position:relative; /* To use absolute positioning for the logo */
 }
 
 .logo {
@@ -61,6 +75,7 @@
 
 .dashboard-container {
     display: flex; /* Use flexbox for the layout */
+    align-self: center;
 }
 
 .navbar {
@@ -71,11 +86,14 @@
 }
 
 .main-content {
-     /* Main content takes the remaining space */
+    /* Main content takes the remaining space */
     padding: 20px; /* Padding for main content */
     background-color: aliceblue; /* Background color for main content */
     border-radius: 15px; /* Rounded corners */
-    margin-left: 300px; /* Optional space between navbar and main content */
+    align-self: center; /* This can be removed, as it's not necessary with margin: auto */
+    margin: 20px auto; /* Center horizontally and add vertical margin */
+    max-width: 800px; /* Set a max-width for better readability */
+    width: 90%; /* Responsive width */
 }
 
 .banking-details-container {

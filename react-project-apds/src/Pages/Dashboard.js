@@ -51,7 +51,10 @@ const Dashboard = () => {
     }, [navigate]);
 
     const handleLocalPayment = () => {
-        navigate('/AddFunds');
+        navigate('/localpayments');
+    };
+    const handleAddFunds = () => {
+        navigate('/addfunds');
     };
 
     const handleTransactions = () => {
@@ -87,7 +90,7 @@ const Dashboard = () => {
                     <button className="nav-button" onClick={() => navigate('/payment-history')}>
                         Payments
                     </button>
-                    <button className="nav-button" onClick={() => navigate('/AddFunds')}>
+                    <button className="nav-button" onClick={() => navigate('/addfunds')}>
                         Add Funds
                     </button>
                     <button className="nav-button" onClick={() => navigate('/InternationalPayments')}>
@@ -149,6 +152,10 @@ const Dashboard = () => {
                         </li>
                     </ul>
                 </div>
+            </div>
+            <div className='Footer'>
+                <h3>Help: 060 744 5462    or      Info@SwiftBanking.com</h3>
+
             </div>
         </div>
     );
