@@ -75,15 +75,6 @@ router.post('/register', async (req, res) => {
 router.post('/login', bruteforce.prevent, async (req, res) => {
     const { username, password } = req.body;
 
-    // Validate username and password formats
-    if (!ValidationUtils.validateUsername(username)) {
-        return res.status(400).send({ error: "Invalid username format." });
-    }
-
-    if (!ValidationUtils.validatePassword(password)) {
-        return res.status(400).send({ error: "Invalid password format." });
-    }
-
     try {
         // Find user by username
         const user = await User.findOne({ username });

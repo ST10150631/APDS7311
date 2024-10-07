@@ -49,13 +49,10 @@ class ValidationUtils {
         return amount > 0;
     }
 
-    // Whitelist: Allow any character for the SWIFT code, length 4 or 11
+   // Whitelist: Allow any character for the SWIFT code, length 8 or 11 alphanumeric characters
     static validateSwiftCode(swiftCode) {
-        const swiftCodeRegex = /^.{4}$|^.{11}$/; 
-        if (!swiftCodeRegex.test(swiftCode)) {
-            return false;
-        }
-        return this.validateAgainstBlacklist(swiftCode);
+        const swiftCodeRegex = /^[a-zA-Z0-9]{8}|[a-zA-Z0-9]{11}$/;
+        return swiftCodeRegex.test(swiftCode);
     }
 
     // Blacklist: Disallow unwanted characters to prevent SQL injections, scripts and attacks
