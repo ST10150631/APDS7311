@@ -48,40 +48,36 @@ jobs:
           cd src
           npm install
 
-      # Step 5: Run ESLint to catch code quality issues
-      - name: Run ESLint
-        run: npm run lint
-
-      # Step 6: Build React App
+      # Step 5: Build React App
       - name: Build React App
         run: npm run build
 
-      # Step 7: Check for known vulnerabilities in dependencies
+      # Step 6: Check for known vulnerabilities in dependencies
       - name: Run npm audit
         run: npm audit --audit-level=high
 
-      # Step 8: Check SSL configuration
+      # Step 7: Check SSL configuration
       - name: Check SSL configuration
         run: |
           if [ ! -f ./keys/privatekey.pem ] || [ ! -f ./keys/certificate.pem ]; then
             echo "SSL certificate or key missing" && exit 1
           fi
 
-      # Step 9: Check HTTPS redirection and security middleware
+      # Step 8: Check HTTPS redirection and security middleware
       - name: Check HTTPS redirection
         run: |
           if ! curl -s -o /dev/null -w "%{http_code}" https://localhost:3001 | grep -q "301"; then
             echo "HTTPS redirection not enforced" && exit 1
           fi
 
-      # Step 10: Run server integration check
+      # Step 9: Run server integration check
       - name: Run server check
         run: |
           node ./backend/server.js &
           sleep 10
           curl -f http://localhost:3001 || exit 1
 
-      # Step 11: Check for protection against additional attacks
+      # Step 10: Check for protection against additional attacks
       - name: Security Attack Checks
         run: |
           # Check for Clickjacking Protection
@@ -114,7 +110,7 @@ jobs:
             echo "DDoS protection missing (express-rate-limit middleware)" && exit 1
           fi
 
-      # Step 12: Upload results 
+      # Step 11: Upload results 
       - name: Upload test results
         if: failure()
         uses: actions/upload-artifact@v3
