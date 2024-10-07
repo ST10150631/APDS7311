@@ -51,7 +51,23 @@ jobs:
       - name: Ensure react-scripts is installed
         run: |
          npm install react-scripts
+     
+     # Install missing Babel plugin
+      - name: Install missing Babel plugin
+        run: npm install --save-dev @babel/plugin-proposal-private-property-in-object
 
+      # Deduplicate eslint-config-react-app
+      - name: Deduplicate eslint-config-react-app
+        run: npx npm dedupe
+
+      # Install eslint-config-react-app explicitly
+      - name: Install eslint-config-react-app
+        run: npm install --save-dev eslint-config-react-app
+
+      # Fix permissions for node_modules
+      - name: Fix permissions for node_modules
+        run: sudo chown -R $USER:$GROUP ./node_modules
+     
       # Step 5: Build React App
       - name: Build React App
         run: |
