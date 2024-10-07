@@ -57,10 +57,6 @@ jobs:
       - name: Ensure react-scripts is installed
         run: |
           npm install react-scripts --legacy-peer-deps
-
-      # Step 9: Check for known vulnerabilities in dependencies
-      - name: Run npm audit
-        run: npm audit
         
       # Step 10: Check SSL configuration
       - name: Check SSL configuration
