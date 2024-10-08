@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-
+import Logo from '../Img/SWIFT BANKING.png'
 //------------------------------------------------------//
 const AddFunds = () => {
     const navigate = useNavigate();
@@ -41,7 +41,7 @@ const AddFunds = () => {
         <div 
         className='bgDashboard'
         style={{
-            backgroundImage: `url(${process.env.PUBLIC_URL + '/images/BGLocal.jpg'})`,
+            backgroundImage: `url(${process.env.PUBLIC_URL + '/images/BGDeposit.jpg'})`,
             backgroundRepeat: 'no-repeat',
             backgroundPosition: 'center center',
             backgroundSize: 'cover',
@@ -53,6 +53,10 @@ const AddFunds = () => {
             padding: '0',
             boxSizing: 'border-box',
         }}>
+            <div className="TopNavbar">
+        <img src={Logo} className="logo" alt="Logo" />
+        <h1>International Payment</h1>
+    </div>
             <div className='add-funds-container'>
                 <div className='form-container'>
                     <h1>Add Funds</h1>
@@ -66,8 +70,8 @@ const AddFunds = () => {
                                 required
                             />
                         </div>
-                        <button type="submit" className="pay-now-btn">Pay Now</button>
-                        <button type="button" className="cancel-btn" onClick={handleCancel}>Cancel</button>
+                        <button type="submit" className="button">Pay Now</button>
+                        <button type="button" className="button" onClick={handleCancel}>Cancel</button>
                     </form>
                 </div>
             </div>
