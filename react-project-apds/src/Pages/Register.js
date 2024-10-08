@@ -30,7 +30,6 @@ const Register = () => {
             idNumber: enteredIDNumber,
         };
 
-        try {
             const response = await fetch('https://localhost:3001/user/register', {
                 method: 'POST',
                 headers: {
@@ -59,10 +58,6 @@ const Register = () => {
                 setError(errorData.error || 'Registration failed');
                 console.error('Registration failed:', errorData);
             }
-        } catch (error) {
-            console.error('Error:', error);
-            setError('An error occurred while registering. Please try again.');
-        }
     };
 
     return (
