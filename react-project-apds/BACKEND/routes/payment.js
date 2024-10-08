@@ -1,10 +1,10 @@
 const express = require("express");
-const { User, Account,Transaction} = require('./models'); // Import the User and Account models
-const checkAuth = require('../check-auth'); // Import your authentication middleware
-
+const { User, Account,Transaction} = require('./models'); 
+const checkAuth = require('../check-auth'); 
+const helmet = require("helmet");
 const ValidationUtils = require('../utils/validationUtils'); 
-
 const router = express.Router();
+router.use(helmet());
 //------------------------------------------------------//
 router.post('/internationalpayment', checkAuth, async (req, res) => {
     const { recipientName, recipientsBank, recipientsAccountNumber, amountToTransfer, swiftCode,transactionType,status } = req.body;

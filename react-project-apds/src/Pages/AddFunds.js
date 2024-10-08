@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Logo from '../Img/SWIFT BANKING.png'
+import { Helmet } from 'react-helmet';
 //------------------------------------------------------//
 const AddFunds = () => {
     const navigate = useNavigate();

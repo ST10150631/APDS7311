@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-
+require('dotenv').config();
 //------------------------------------------------------//
 //Checks if the users token is authorized 
 const checkAuth = (req, res, next) => {
@@ -13,7 +13,7 @@ const checkAuth = (req, res, next) => {
             return res.status(401).json({ message: "Token missing" });
         }
 
-        const decoded = jwt.verify(token, "this_secret_should_be_longer_than_it_is");
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
         req.user = decoded; 
         next(); 
     } catch (error) {

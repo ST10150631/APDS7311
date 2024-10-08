@@ -4,10 +4,13 @@ const jwt = require("jsonwebtoken");
 const ExpressBrute = require("express-brute");
 const { User, Account } = require('./models'); // Import models from the new models file
 const checkAuth = require("../check-auth");
-
+require('dotenv').config();
 const ValidationUtils = require('../utils/validationUtils'); 
+const helmet = require("helmet");
+
 
 const router = express.Router();
+router.use(helmet());
 const store = new ExpressBrute.MemoryStore(); 
 const bruteforce = new ExpressBrute(store);
 //------------------------------------------------------//
@@ -89,7 +92,7 @@ router.post('/login', bruteforce.prevent, async (req, res) => {
         }
 
         // Generate a JWT for the user
-        const token = jwt.sign({ id: user._id, username: user.username }, 'this_secret_should_be_longer_than_it_is', { expiresIn: '1h' });
+        const token = jwt.sign({ id: user._id, username: user.username }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
         // Find the user's account information
         const account = await Account.findOne({ userId: user._id });
