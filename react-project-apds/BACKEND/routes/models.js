@@ -7,6 +7,8 @@ const transactionSchema = new mongoose.Schema({
     recipientsAccountNumber: String,
     amountToTransfer: Number,
     swiftCode: String,
+    transactionType: String,
+    status: String,
     date: { type: Date, default: Date.now }
 });
 

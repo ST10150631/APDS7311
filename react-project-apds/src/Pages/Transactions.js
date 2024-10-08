@@ -50,11 +50,11 @@ const Dashboard = () => {
                
                 {/* Side Menu */}
                 <div className="navbar">
-                    <button className="nav-button" onClick={() => navigate('/Transactions')}>
-                        Transactions
+                    <button className="nav-button" onClick={() => navigate('/Dashboard')}>
+                        Dashboard
                     </button>
-                    <button className="nav-button" onClick={() => navigate('/payment-history')}>
-                        Payments
+                    <button className="nav-button" onClick={() => navigate('/LocalPayments')}>
+                        Local Payments
                     </button>
                     <button className="nav-button" onClick={() => navigate('/AddFunds')}>
                         Add Funds

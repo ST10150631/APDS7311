@@ -7,7 +7,7 @@ const ValidationUtils = require('../utils/validationUtils');
 const router = express.Router();
 //------------------------------------------------------//
 router.post('/internationalpayment', checkAuth, async (req, res) => {
-    const { recipientName, recipientsBank, recipientsAccountNumber, amountToTransfer, swiftCode } = req.body;
+    const { recipientName, recipientsBank, recipientsAccountNumber, amountToTransfer, swiftCode,transactionType,status } = req.body;
 
     // Validate inputs before proceeding
     if (!ValidationUtils.validateName(recipientName)) {
@@ -66,6 +66,8 @@ router.post('/internationalpayment', checkAuth, async (req, res) => {
             recipientsAccountNumber,
             amountToTransfer,
             swiftCode,
+            transactionType,
+            status,
             date: new Date() // Current date
         });
 

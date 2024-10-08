@@ -13,7 +13,9 @@ const LocalPayment = () => {
     const [enteredRecipientsAccountNumber, setEnteredRecipientsAccountNumber] = useState('');
     const [enteredAmountToTransfer, setEnteredAmountToTransfer] = useState('');
     const [enteredSWIFTCode, setEnteredSWIFTCode] = useState('');
-
+    const [transactionType, setTransactionType] = useState('Local'); // Use useState for transactionType
+    const [status, setStatus] = useState('Pending'); // Use useState for status
+    
     const handleInternationalPayment = async (e) => {
         e.preventDefault();
         
@@ -24,11 +26,14 @@ const LocalPayment = () => {
             recipientsBank: enteredRecipientsBank,
             recipientsAccountNumber: enteredRecipientsAccountNumber,
             amountToTransfer: parseFloat(enteredAmountToTransfer),
-            swiftCode: enteredSWIFTCode
+            swiftCode: enteredSWIFTCode,
+            transactionType: transactionType,
+            status: status
+
         };
 
         try {
-            const response = await fetch('https://localhost:3001/payment/LocalPayment', {
+            const response = await fetch('https://localhost:3001/payment/internationalpayment', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

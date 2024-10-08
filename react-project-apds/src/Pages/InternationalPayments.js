@@ -13,6 +13,8 @@ const InternationalPayments = () => {
     const [enteredRecipientsAccountNumber, setEnteredRecipientsAccountNumber] = useState('');
     const [enteredAmountToTransfer, setEnteredAmountToTransfer] = useState('');
     const [enteredSWIFTCode, setEnteredSWIFTCode] = useState('');
+    const [transactionType, setTransactionType] = useState('International'); // Use useState for transactionType
+    const [status, setStatus] = useState('Pending'); // Use useState for status
 
     const handleInternationalPayment = async (e) => {
         e.preventDefault();
@@ -24,7 +26,9 @@ const InternationalPayments = () => {
             recipientsBank: enteredRecipientsBank,
             recipientsAccountNumber: enteredRecipientsAccountNumber,
             amountToTransfer: parseFloat(enteredAmountToTransfer),
-            swiftCode: enteredSWIFTCode
+            swiftCode: enteredSWIFTCode,
+            transactionType: transactionType,
+            status: status
         };
 
         try {
