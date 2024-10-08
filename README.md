@@ -2,9 +2,9 @@
 
 ## Team:
 
-- ST10108388: Aiden Byrne 
-- ST10150631: Michael Stewart Turner 
-- ST10023767: Mikayle Devonique Coetzee
+- ST10108388: Aiden Byrne ST10108388
+- ST10150631: Michael Stewart Turner ST10150631
+- ST10023767: Mikayle Devonique Coetzee ST10023767
 
 ## Video 
 
@@ -26,6 +26,15 @@ This project involves developing a secure International Payments Portal for an i
 - Node.js: Ensure you have Node.js installed.
 - MongoDB: You need a running MongoDB instance. You can use a local setup or MongoDB Atlas.
 - Visual Studio Code: Download Visual Studio Code for editing and managing the project.
+- Google Chrome
+
+## PLEASE NOTE IF USING CHROME
+
+- Enter this link in your browser  chrome://flags/#allow-insecure-localhost
+- You will then have the 'Allow invalid certificates for resources loaded from localhost.' to enabled
+- This allows the browser to run the local certificates and ensure HTTPS
+- Once deployed onto a server this issue will no longer persist.
+
 
 ## Installation Instructions
 1. Clone the Repository
@@ -37,7 +46,7 @@ This project involves developing a secure International Payments Portal for an i
 
 The application should be running on:
 - Frontend: http://localhost:3000
-- Backend: http://localhost:5000
+- Backend: http://localhost:3001
 
 ## Features
 
