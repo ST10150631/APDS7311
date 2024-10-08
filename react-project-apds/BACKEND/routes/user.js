@@ -15,11 +15,12 @@ const store = new ExpressBrute.MemoryStore();
 //const bruteforce = new ExpressBrute(store);
 
 
-const bruteforce = new ExpressBrute(store, {
-    freeRetries: 5,               // Allow 5 failed attempts before blocking
-    minWait: 5 * 60 * 1000,       // Block for 5 minutes after 5 attempts
-    maxWait: 15 * 60 * 1000       // Maximum wait time is 15 minutes
-});
+const bruteforce = new ExpressBrute(store, 
+    {
+    freeRetries: 5,               
+    minWait: 5 * 60 * 1000,       
+    maxWait: 15 * 60 * 1000       
+    });
 //------------------------------------------------------//
 // Handle the POST request for registration
 router.post('/register', async (req, res) => {
