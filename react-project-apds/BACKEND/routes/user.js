@@ -28,9 +28,6 @@ router.post('/register', async (req, res) => {
         return res.status(400).send({ error: "Invalid username. Use only alphanumeric characters (3-20)." });
     }
 
-    if (!ValidationUtils.validatePassword(password)) {
-        return res.status(400).send({ error: "Invalid password. Must be 8-30 characters with at least one letter and one number." });
-    }
 
     if (!ValidationUtils.validateIDNumber(idNumber)) {
         return res.status(400).send({ error: "Invalid South African ID number. Must be 13 digits." });

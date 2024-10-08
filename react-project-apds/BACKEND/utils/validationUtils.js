@@ -23,11 +23,6 @@ class ValidationUtils {
         return emailRegex.test(email);
     }
 
-    // Whitelist: Password must be 8-30 chars, include at least one number and one letter
-    static validatePassword(password) {
-        const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,30}$/;
-        return passwordRegex.test(password);
-    }
 
     // Whitelist: South African ID validation 
     static validateIDNumber(idNumber) {

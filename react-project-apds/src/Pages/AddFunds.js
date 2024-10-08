@@ -30,7 +30,7 @@ const AddFunds = () => {
 
             const data = await response.json();
             alert(`Balance updated successfully! New Balance: ${data.newBalance}`);
-            navigate('/internationalpayments');
+            navigate('/Dashboard');
         } catch (error) {
             console.error('Error adding funds:', error);
             alert(`Error: ${error.message}`);
@@ -55,7 +55,7 @@ const AddFunds = () => {
         }}>
             <div className="TopNavbar">
         <img src={Logo} className="logo" alt="Logo" />
-        <h1>International Payment</h1>
+        <h1>Deposit</h1>
     </div>
             <div className='add-funds-container'>
                 <div className='form-container'>
