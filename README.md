@@ -1,5 +1,7 @@
 # APDS7311 
 
+Github REPO - https://github.com/ST10150631/APDS7311
+
 ## Team:
 
 - ST10108388: Aiden Byrne ST10108388
@@ -10,6 +12,8 @@
 
 ## Project Overview:
 This project involves developing a secure International Payments Portal for an international bank. The portal enables customers to register, log in, and make international payments, which are then verified and processed by employees in part 3.
+
+## Please Note that there are files that would never be uploaded or publically shared in a real world scenerio however to allow lectureres to run the application these files are available and can be configured.
 
 ## Technologies Used
 - Frontend: React (JavaScript)
