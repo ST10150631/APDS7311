@@ -7,6 +7,7 @@ const PORT = 3001;
 const user = require("./routes/user");
 const payment = require("./routes/payment");
 const { connectToDatabase } = require('./db/conn');
+const helmet = require('helmet');
 
 // Connects to the database
 connectToDatabase().catch(err => {
@@ -29,6 +30,7 @@ try {
 
 //Routes
 app.use(cors());
+app.use(helmet());
 app.use(express.json());
 app.use('/user',user);
 app.route("/user",user);

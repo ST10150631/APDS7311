@@ -89,6 +89,8 @@ const Dashboard = () => {
                                     <td>{transaction.recipientsBank}</td>
                                     <td>{transaction.amountToTransfer}</td>
                                     <td>{transaction.swiftCode}</td>
+                                    <td>{transaction.status}</td>
+                                    <td>{transaction.transactionType}</td>
                                 </tr>
                             ))}
                         </tbody>

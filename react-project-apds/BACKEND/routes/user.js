@@ -4,12 +4,23 @@ const jwt = require("jsonwebtoken");
 const ExpressBrute = require("express-brute");
 const { User, Account } = require('./models'); // Import models from the new models file
 const checkAuth = require("../check-auth");
-
+require('dotenv').config();
 const ValidationUtils = require('../utils/validationUtils'); 
+const helmet = require("helmet");
+
 
 const router = express.Router();
+router.use(helmet());
 const store = new ExpressBrute.MemoryStore(); 
-const bruteforce = new ExpressBrute(store);
+//const bruteforce = new ExpressBrute(store);
+
+
+const bruteforce = new ExpressBrute(store, 
+    {
+    freeRetries: 5,               
+    minWait: 5 * 60 * 1000,       
+    maxWait: 15 * 60 * 1000       
+    });
 //------------------------------------------------------//
 // Handle the POST request for registration
 router.post('/register', async (req, res) => {
@@ -28,9 +39,6 @@ router.post('/register', async (req, res) => {
         return res.status(400).send({ error: "Invalid username. Use only alphanumeric characters (3-20)." });
     }
 
-    if (!ValidationUtils.validatePassword(password)) {
-        return res.status(400).send({ error: "Invalid password. Must be 8-30 characters with at least one letter and one number." });
-    }
 
     if (!ValidationUtils.validateIDNumber(idNumber)) {
         return res.status(400).send({ error: "Invalid South African ID number. Must be 13 digits." });
@@ -89,7 +97,7 @@ router.post('/login', bruteforce.prevent, async (req, res) => {
         }
 
         // Generate a JWT for the user
-        const token = jwt.sign({ id: user._id, username: user.username }, 'this_secret_should_be_longer_than_it_is', { expiresIn: '1h' });
+        const token = jwt.sign({ id: user._id, username: user.username }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
         // Find the user's account information
         const account = await Account.findOne({ userId: user._id });

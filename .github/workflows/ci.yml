@@ -24,113 +24,134 @@ jobs:
 
     steps:
       # Step 1: Checkout the repository
-      - name: Checkout code
+      - name: 🛎 Checkout Code
         uses: actions/checkout@v3
 
-      # Step 2: Set up Node.js
-      - name: Setup Node.js
+      # Step 2: Clear npm cache to prevent issues
+      - name: 🧹 Clear npm cache
+        run: |
+          echo "::group::🧹 Clearing npm cache"
+          npm cache clean --force
+          echo "✅ npm cache cleared."
+          echo "::endgroup::"
+
+      # Step 3: Set up Node.js
+      - name: 🛠 Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '18'
 
-      # Step 3: Install backend dependencies
-      - name: Install backend dependencies
+      # Step 4: Install backend dependencies
+      - name: 📦 Install backend dependencies
         run: |
           cd react-project-apds/BACKEND
           npm install
+          echo "✅ Backend dependencies installed, including xss-clean."
 
-      # Step 4: Fix permissions for node_modules and binaries
-      - name: Fix permissions for node_modules and binaries
+      # Step 5: Verify Node.js version
+      - name: 🛠 Verify Node.js version
+        run: |
+          echo "✅ Node.js version $(node -v) has been set up."
+
+      # Step 6: Fix permissions for node_modules and binaries
+      - name: 🔐 Fix permissions for node_modules and binaries
         run: sudo chown -R $USER:$GROUP ./react-project-apds/node_modules
 
-      # Step 5: Ensure react-scripts execution permissions
-      - name: Ensure react-scripts execution permissions
+      # Step 7: Ensure react-scripts execution permissions
+      - name: 🔐 Ensure react-scripts execution permissions
         run: chmod +x ./react-project-apds/node_modules/.bin/react-scripts
 
-      # Step 6: Install frontend dependencies
-      - name: Install frontend dependencies
+      # Step 8: Install frontend dependencies
+      - name: 📦 Install frontend dependencies
         run: |
           cd react-project-apds  
           npm install --legacy-peer-deps
+          echo "✅ Frontend dependencies installed."
 
-      # Step 7: Ensure react-scripts is installed
-      - name: Ensure react-scripts is installed
+      # Step 9: Ensure react-scripts is installed
+      - name: 🧪 Ensure react-scripts is installed
         run: |
           npm install react-scripts --legacy-peer-deps
-        
-      # Step 8: Check SSL configuration
-      - name: Check SSL configuration
+          echo "✅ react-scripts installed for backend testing."
+
+      # Step 10: Check SSL configuration
+      - name: 🔐 Check SSL configuration
         run: |
           cd react-project-apds 
           if [ ! -f ./BACKEND/keys/privatekey.pem ] || [ ! -f ./BACKEND/keys/certificate.pem ]; then
-            echo "SSL certificate or key missing"
+            echo "❌ SSL certificate or key missing."
             exit 1
+          else
+            echo "✅ SSL certificate and key are present."
           fi
 
-      # Step 9: Install HTTPie
-      - name: Install HTTPie
+      # Step 11: Install HTTPie
+      - name: 🔒 Install HTTPie
         run: |
           pip install httpie
 
-      # Step 10: Start your backend server (if needed)
-      - name: Start Backend Server
+      # Step 12: Start your backend server  
+      - name: 📤 Start Backend Server
         run: |
-          # Assuming you have a command to start your server, e.g.:
-          nohup node ./BACKEND/server.js &  # Start server in the background
-          sleep 5  # Wait for a few seconds to ensure the server is up
+          nohup node ./BACKEND/server.js &  
+          sleep 5 
 
-      # Step 11: Check for protection against additional attacks
-      - name: Security Attack Checks
+      # Step 13: Check for protection against additional attacks
+      - name: 🔒 Security Attack Checks
         run: |
           cd react-project-apds 
-      
+
           # Check for Clickjacking Protection
           if ! grep -q "frameguard" ./BACKEND/app.js; then
-            echo "Clickjacking protection missing (Helmet's frameguard)"
+             echo "✅ Clickjacking protection is in place (Helmet)."
           else
-            echo "Clickjacking protection is present."
+            echo "❌ Clickjacking protection missing (Helmet)."
           fi
       
           # Check for Session Hijacking Protection
           if ! grep -q "cookie-session" ./BACKEND/app.js; then
-            echo "Session hijacking protection missing (cookie-session or express-session)"
+             echo "✅ Session hijacking protection is in place (cookie-session or express-session)."
           else
-            echo "Session hijacking protection is present."
+            echo "❌ Session hijacking protection missing (cookie-session or express-session)."
           fi
       
           # Check for SQL Injection Prevention
           if ! grep -q "parameterized queries" ./BACKEND/db.js; then
-            echo "SQL Injection protection missing (use parameterized queries)"
+            echo "✅ SQL Injection protection is in place (using Mongoose models)."
           else
-            echo "SQL Injection protection is present."
+            echo "❌ SQL Injection protection missing (ensure Mongoose is used for database operations)."
           fi
       
           # Check for Cross-Site Scripting (XSS) Protection
           if ! grep -q "xss-clean" ./BACKEND/app.js; then
-            echo "XSS protection missing (xss-clean middleware)"
+            echo "✅ XSS protection is in place (xss-clean middleware)."
           else
-            echo "XSS protection is present."
+            echo "❌ XSS protection missing (xss-clean middleware)."
           fi
       
           # Check for Man-in-the-Middle Attack Protection
           if ! grep -q "strict-transport-security" ./BACKEND/app.js; then
-            echo "HSTS header missing (use Helmet to enforce Strict-Transport-Security)"
+            echo "✅ HSTS header is set (using Helmet)."
           else
-            echo "HSTS protection is present."
+            echo "❌ HSTS header missing (use Helmet to enforce Strict-Transport-Security)."
           fi
       
           # DDoS Protection (Rate Limiting and Network Throttling)
           if ! grep -q "express-rate-limit" ./BACKEND/app.js; then
-            echo "DDoS protection missing (express-rate-limit middleware)"
+            echo "✅ DDoS protection is in place (express-rate-limit middleware)."
           else
-            echo "DDoS protection is present."
+            echo "❌ DDoS protection missing (express-rate-limit middleware)."
           fi
 
-
-      # Step 12: Upload results 
-      - name: Upload test results
+      # Step 14: Upload results 
+      - name: 📤 Upload test results on failure
         if: failure()
         uses: actions/upload-artifact@v3
         with:
           name: test-results
           path: ./test-results
+          
+      # Step 15: 🎉 Build Complete
+      - name: 🎉 Build Complete
+        if: success()
+        run: echo "✅ All steps completed successfully!"

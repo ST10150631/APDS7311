@@ -1,0 +1,82 @@
+version: 2.1
+
+orbs:
+  node: circleci/node@5   
+
+executors:
+  node-executor:
+    docker:
+      - image: circleci/node:18  
+    working_directory: ~/project
+
+  sonar-executor:
+    docker:
+      - image: circleci/openjdk:11-jdk
+    working_directory: ~/project
+
+jobs:
+  test-backend:
+    executor: node-executor
+    working_directory: ~/project/BACKEND
+    steps:
+      - checkout
+      - node/install-packages:
+          pkg-manager: npm
+      - run:
+          name: Run backend tests
+          command: npm test --prefix BACKEND  
+      - store_test_results:
+          path: ~/project/BACKEND/test-results 
+
+  build-frontend:
+    executor: node-executor
+    working_directory: ~/project/src
+    steps:
+      - checkout
+      - node/install-packages:
+          pkg-manager: npm
+      - run:
+          name: Build frontend
+          command: npm run build --prefix src  
+      - run:
+          name: Create artifacts directory
+          command: mkdir -p ~/artifacts
+      - run:
+          name: Copy frontend build artifacts
+          command: |
+            cp -R build ~/artifacts/build || true
+            cp -R dist ~/artifacts/dist || true
+      - store_artifacts:
+          path: ~/artifacts
+          destination: frontend-build
+
+  sonarcloud:
+    executor: sonar-executor
+    working_directory: ~/project
+    steps:
+      - checkout
+      - run:
+          name: Install SonarScanner
+          command: |
+            curl -sSLo sonar-scanner-cli.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.6.2.2472-linux.zip
+            unzip sonar-scanner-cli.zip -d $HOME
+            export PATH=$HOME/sonar-scanner-4.6.2.2472-linux/bin:$PATH
+      - run:
+          name: Run SonarCloud analysis
+          command: |
+            sonar-scanner \
+              -Dsonar.projectKey=st10150631 \
+              -Dsonar.organization=Mike_Turner \
+              -Dsonar.host.url=https://sonarcloud.io \
+              -Dsonar.login=5d76a818b8dad8476e5412fc8843a6a335d1f078
+
+workflows:
+  build-and-test:
+    jobs:
+      - test-backend
+      - build-frontend:
+          requires:
+            - test-backend
+      - sonarcloud:
+          requires:
+            - build-frontend
