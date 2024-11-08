@@ -14,18 +14,36 @@ const transactionSchema = new mongoose.Schema({
 
 const Transaction = mongoose.model('Transaction', transactionSchema);
 
-// User Schema for MongoDB
+
 const UserSchema = new mongoose.Schema({
-    firstName: String,
-    lastName: String,
-    email: String,
-    username: String,
-    password: String,
-    accountNumber: String,
-    idNumber: String,
+    firstName: { type: String, required: true },
+    lastName: { type: String, required: true },
+    email: { type: String, required: true, unique: true },
+    username: { type: String, required: true, unique: true },
+    password: { type: String, required: true },
+    accountNumber: { type: String},
+    idNumber: { type: String, required: true },
+    role: { type: String, enum: ["user", "employee", "admin"], default: "user" } 
 });
 
 const User = mongoose.model('User', UserSchema);
+
+
+const EmployeeSchema = new mongoose.Schema({
+    firstName: { type: String, required: true },
+    lastName: { type: String, required: true },
+    email: { type: String, required: true, unique: true },
+    username: { type: String, required: true, unique: true },
+    password: { type: String, required: true },
+    idNumber: { type: String, required: true },
+    role: { 
+        type: String, 
+        enum: ["employee", "manager"], // Defines allowed roles
+        default: "employee" 
+    }
+});
+
+const Employee = mongoose.model('Employee', EmployeeSchema);
 
 const AccountSchema = new mongoose.Schema({
     userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }, 
@@ -35,5 +53,32 @@ const AccountSchema = new mongoose.Schema({
 
 const Account = mongoose.model('Account', AccountSchema);
 
-module.exports = { User, Account ,Transaction};
+const AdminSchema = new mongoose.Schema({
+    firstName: { type: String, required: true },
+    lastName: { type: String, required: true },
+    email: { type: String, required: true, unique: true },
+    username: { type: String, required: true, unique: true },
+    password: { type: String, required: true },
+    idNumber: { type: String, required: true },
+    role: { type: String, default: "admin" }  // Fixed role as "admin"
+});
+
+const Admin = mongoose.model('Admin', AdminSchema);
+
+
+const ManagerSchema = new mongoose.Schema({
+    firstName: { type: String, required: true },
+    lastName: { type: String, required: true },
+    email: { type: String, required: true, unique: true },
+    username: { type: String, required: true, unique: true },
+    password: { type: String, required: true },
+    idNumber: { type: String, required: true },
+    role: { type: String, default: "manager" }  // Fixed role as "admin"
+});
+
+const Manager = mongoose.model('Manager', ManagerSchema);
+
+
+
+module.exports = { User, Account ,Transaction,Employee,Admin,Manager};
 //-------------------------------END OF FILE--------------------//
