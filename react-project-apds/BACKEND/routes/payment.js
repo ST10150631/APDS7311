@@ -127,24 +127,65 @@ router.get('/transactions', checkAuth, async (req, res) => {
         res.status(500).send({ error: "Failed to fetch transactions" });
     }
 });
+//
+// Route to update transaction status (confirmed/denied/flagged)
+// ----------------------------------------------------------------------------------------
+router.put('/transaction/:id/status', checkAuth, async (req, res) => {
+    const { id } = req.params; // Get the transaction ID from URL
+    const { status } = req.body; // Get the new status from request body
 
+    // Validate status
+    const validStatuses = ['confirmed', 'denied', 'flagged'];
+    if (!validStatuses.includes(status)) {
+        return res.status(400).send({ error: "Invalid status. Status must be one of: 'confirmed', 'denied', 'flagged'." });
+    }
 
-// Handle GET request to fetch transaction history for the logged-in user
-router.get('/transactions', checkAuth, async (req, res) => {
     try {
-        const user = await User.findById(req.user.id); // Get user ID from token
-        if (!user) {
-            return res.status(404).send({ error: "User not found" });
+        const transaction = await Transaction.findById(id);
+        if (!transaction) {
+            return res.status(404).send({ error: "Transaction not found" });
         }
 
-        // Fetch transactions for the logged-in user, sorted by date
-        const transactions = await Transaction.find({ userId: user._id }).sort({ date: -1 });
-        res.status(200).json(transactions); // Send back the transactions as JSON
+        // Update the transaction status
+        transaction.status = status;
+        await transaction.save();
+
+        res.status(200).send({ message: `Transaction status updated to ${status}` });
     } catch (error) {
-        console.error('Error fetching transactions:', error);
-        res.status(500).send({ error: "Failed to fetch transactions" });
+        console.error('Error updating transaction status:', error);
+        res.status(500).send({ error: "Failed to update transaction status" });
     }
 });
+//------------------------------------------------------//
+
+//------------------------------------------------------//
+// Route to get all transactions with a specific status
+// ----------------------------------------------------------------------------------------
+router.get('/transactions/pending', checkAuth, async (req, res) => {
+    try {
+        const transactions = await Transaction.find({status: 'Pending'}).sort({ date: -1 });
+        res.status(200).json(transactions); // Return all pending transactions
+    } catch (error) {
+        console.error('Error fetching pending transactions:', error);
+        res.status(500).send({ error: "Failed to fetch pending transactions" });
+    }
+});
+//------------------------------------------------------//
+
+//------------------------------------------------------//
+// Route to get all transactions regardless of user ID
+// ----------------------------------------------------------------------------------------
+router.get('/transactions/all', checkAuth, async (req, res) => {
+    try {
+        const transactions = await Transaction.find().sort({ date: -1 });
+        res.status(200).json(transactions); // Return all transactions
+    } catch (error) {
+        console.error('Error fetching all transactions:', error);
+        res.status(500).send({ error: "Failed to fetch all transactions" });
+    }
+});
+//------------------------------------------------------//
+
 
 module.exports = router;
 //----------------------------------END OF FILE---------------------------//

@@ -7,10 +7,12 @@ import Register from './Pages/Register';
 import Login from './Pages/Login';
 import Dashboard from './Pages/Dashboard';
 import Test from './Pages/Test';
-import InternationalPayment from './Pages/InternationalPayments'
+import InternationalPayment from './Pages/InternationalPayments';
 import LocalPayment from './Pages/LocalPayments';
-import Transactions from './Pages/Transactions'
-import AddFunds from './Pages/AddFunds'
+import Transactions from './Pages/Transactions';
+import '@fortawesome/fontawesome-free/css/all.min.css';
+import StaffTransactions from './Pages/StaffTransactions';
+import AddFunds from './Pages/AddFunds';
 //Router for navigation so if a new page is created add the path to this so that you can use links to access it 
 //-------------------------------------------------------//
   const router = createBrowserRouter([
@@ -41,6 +43,10 @@ import AddFunds from './Pages/AddFunds'
 {
   path: "/localpayments", 
   element: <LocalPayment/>,
+},
+{
+  path: "/StaffTransactions",
+  element: <StaffTransactions/>,
 },
 {
   path: "/addfunds", 

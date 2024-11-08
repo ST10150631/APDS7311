@@ -11,12 +11,12 @@ const Login = () => {
     const navigate = useNavigate();
     const handleLogin = async (e) => {
         e.preventDefault();
-
+    
         const loginData = {
             username: enteredUsername,
             password: enteredPassword,
         };
-
+    
         try {
             const response = await fetch('https://localhost:3001/user/login', {
                 method: 'POST',
@@ -25,7 +25,7 @@ const Login = () => {
                 },
                 body: JSON.stringify(loginData),
             });
-
+    
             if (response.ok) {
                 const result = await response.json();
                 setSuccessMessage('Login successful!');
@@ -33,13 +33,13 @@ const Login = () => {
                 navigate('/dashboard');
             } else {
                 const errorData = await response.json();
-                setError(errorData.error || 'Login failed');
+                // Ensure error message is a string
+                setError(typeof errorData.error === 'string' ? errorData.error : JSON.stringify(errorData.error));
             }
         } catch (error) {
             setError('An error occurred while logging in. Please try again.');
         }
     };
-
     return (
         <div
             style={{

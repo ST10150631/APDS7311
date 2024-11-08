@@ -28,6 +28,7 @@ const Dashboard = () => {
 
                 if (response.ok) {
                     const data = await response.json();
+                    console.log(data);
                     setTransactions(data);
                 } else {
                     console.error("Failed to fetch transactions");
@@ -87,7 +88,9 @@ const Dashboard = () => {
     const handleTransactions = () => {
         navigate('/Transactions');
     };
-
+    const handleStaffTranactions = () => {
+        navigate('/StaffTransactions');
+    };
 
     const handleInternationalPayment = () => {
         navigate('/InternationalPayments');
@@ -122,6 +125,9 @@ const Dashboard = () => {
                     </button>
                     <button className="nav-button" onClick={() => navigate('/InternationalPayments')}>
                         International Payments
+                    </button>
+                    <button className="nav-button" onClick={() => navigate('/StaffTransactions')}>
+                        Staff Only
                     </button>
                 </div>
 
@@ -189,8 +195,8 @@ const Dashboard = () => {
                                     <td>{transaction.recipientsBank}</td>
                                     <td>{transaction.amountToTransfer}</td>
                                     <td>{transaction.swiftCode}</td>
-                                    <td>{transaction.status}</td>
-                                    <td>{transaction.transactionType}</td>
+                                    <td>{transaction.status ? transaction.status : 'No status'}</td>
+                                    <td>{transaction.transactionType || 'Unknown'}</td>
                                 </tr>
                             ))}
                         </tbody>
