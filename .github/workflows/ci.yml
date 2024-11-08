@@ -54,11 +54,11 @@ jobs:
           echo "✅ Node.js version $(node -v) has been set up."
 
       # Step 6: Fix permissions for node_modules and binaries
-      - name: Fix permissions for node_modules and binaries
+      - name: 🔐 Fix permissions for node_modules and binaries
         run: sudo chown -R $USER:$GROUP ./react-project-apds/node_modules
 
       # Step 7: Ensure react-scripts execution permissions
-      - name: Ensure react-scripts execution permissions
+      - name: 🔐 Ensure react-scripts execution permissions
         run: chmod +x ./react-project-apds/node_modules/.bin/react-scripts
 
       # Step 8: Install frontend dependencies
