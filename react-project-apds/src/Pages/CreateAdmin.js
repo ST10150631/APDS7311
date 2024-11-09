@@ -1,3 +1,6 @@
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import './styles/Register.css';
 const CreateAdmin = () => {
     
     const [enteredFirstNameAdmin, setEnteredFirstNameAdmin] = useState('');
@@ -6,9 +9,53 @@ const CreateAdmin = () => {
     const [enteredUsernameAdmin, setEnteredUsernameAdmin] = useState('');
     const [enteredPasswordAdmin, setEnteredPasswordAdmin] = useState('');
     const [enteredConfirmPasswordAdmin, setEnteredConfirmPasswordAdmin] = useState('');
-    const [enteredIDNumberAdmin, setIDNumberEmployeeAdmin] = useState('');
+    const [enteredIDNumberAdmin, setIDNumberAdmin] = useState('');
     const [error, setError] = useState(''); 
     const [successMessage, setSuccessMessage] = useState(''); 
+
+    const navigate = useNavigate();
+
+    const handleAdminCreation = async (e) => {
+        e.preventDefault();
+
+        const adminData = {
+            firstName: enteredFirstNameAdmin,
+            lastName: enteredLastNameAdmin,
+            email: enteredEmailAddressAdmin,
+            username: enteredUsernameAdmin,
+            password: enteredPasswordAdmin,
+            idNumber: enteredIDNumberAdmin
+        };
+
+            const response = await fetch('https://localhost:3001/user/createAdmin', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(adminData),
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                setSuccessMessage('Admin account created successfully!');
+                //console.log('User registered successfully:', result);
+                navigate('/dashboard'); 
+                setEnteredFirstNameAdmin('');
+                setEnteredLastNameAdmin('');
+                setEnteredEmailAddressAdmin('');
+                setEnteredUsernameAdmin('');
+                setEnteredPasswordAdmin('');
+                setEnteredConfirmPasswordAdmin('');
+                
+                setIDNumberAdmin('');
+                setError('');
+            } else {
+                const errorData = await response.json();
+                setError(errorData.error || 'Admin account creation failed');
+                console.error('Admin account creation failed:', errorData);
+            }
+    };
+
     return (
         <div
             style={{
@@ -28,8 +75,8 @@ const CreateAdmin = () => {
         >
             <div className="register-container">
                 <div className="form-container">
-                    <h1>Customer Registration</h1>
-                    <form onSubmit={handleRegister}>
+                    <h1>Admin Creation</h1>
+                    <form onSubmit={handleAdminCreation}>
                         <div className="input-group">
                             <input
                                 type="text"
@@ -41,7 +88,7 @@ const CreateAdmin = () => {
                             <input
                                 type="text"
                                 placeholder="Last Name"
-                                value={enteredLastNameEmployee}
+                                value={enteredLastNameAdmin}
                                 onChange={(e) => setEnteredLastNameAdmin(e.target.value)}
                                 required
                             />
@@ -97,3 +144,4 @@ const CreateAdmin = () => {
         </div>
 );
 }
+export default CreateAdmin;

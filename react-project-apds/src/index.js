@@ -12,6 +12,8 @@ import LocalPayment from './Pages/LocalPayments';
 import Transactions from './Pages/Transactions';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import StaffTransactions from './Pages/StaffTransactions';
+import CreateAdmin from './Pages/CreateAdmin';
+import CreateEmployee from './Pages/CreateEmployee';
 import AddFunds from './Pages/AddFunds';
 //Router for navigation so if a new page is created add the path to this so that you can use links to access it 
 //-------------------------------------------------------//
@@ -51,6 +53,14 @@ import AddFunds from './Pages/AddFunds';
 {
   path: "/addfunds", 
   element: <AddFunds/>,
+},
+{
+  path: "/CreateAdmin", 
+  element: <CreateAdmin/>,
+},
+{
+  path: "/CreateEmployee", 
+  element: <CreateEmployee/>,
 }
   ]);
 //-------------------------------------------------------//

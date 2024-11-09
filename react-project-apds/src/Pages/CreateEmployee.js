@@ -1,4 +1,8 @@
-const CreateEmployee = () =>{
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import './styles/Register.css';
+
+const CreateEmployee = () => {
     const [enteredFirstNameEmployee, setEnteredFirstNameEmployee] = useState('');
     const [enteredLastNameEmployee, setEnteredLastNameEmployee] = useState('');
     const [enteredEmailAddressEmployee, setEnteredEmailAddressEmployee] = useState('');
@@ -6,8 +10,93 @@ const CreateEmployee = () =>{
     const [enteredPasswordEmployee, setEnteredPasswordEmployee] = useState('');
     const [enteredConfirmPasswordEmployee, setEnteredConfirmPasswordEmployee] = useState('');
     const [enteredIDNumberEmployee, setIDNumberEmployee] = useState('');
-    const [error, setError] = useState(''); 
-    const [successMessage, setSuccessMessage] = useState(''); 
+    const [error, setError] = useState('');
+    const [successMessage, setSuccessMessage] = useState('');
+    const [userRole, setUserRole] = useState('');
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        // Fetch user data to check if the logged-in user is an admin
+        const fetchUserData = async () => {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                navigate('/login');
+                return;
+            }
+
+            try {
+                const response = await fetch('https://localhost:3001/user/getUser', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                    },
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    setUserRole(result.user.role); // Set the role of the logged-in user
+                } else {
+                    navigate('/login');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                navigate('/login');
+            }
+        };
+
+        fetchUserData();
+    }, [navigate]);
+
+    const handleEmployeeCreation = async (e) => {
+        e.preventDefault();
+
+        const employeeData = {
+            firstName: enteredFirstNameEmployee,
+            lastName: enteredLastNameEmployee,
+            email: enteredEmailAddressEmployee,
+            username: enteredUsernameEmployee,
+            password: enteredPasswordEmployee,
+            idNumber: enteredIDNumberEmployee,
+        };
+
+        const token = localStorage.getItem('token'); // Or retrieve it from wherever you store the token
+
+        const response = await fetch('https://localhost:3001/user/createEmployee', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}` // Add the token here
+            },
+            body: JSON.stringify(employeeData),
+        });
+
+        if (response.ok) {
+            const result = await response.json();
+            setSuccessMessage('Employee account created successfully!');
+            navigate('/dashboard');
+            setEnteredFirstNameEmployee('');
+            setEnteredLastNameEmployee('');
+            setEnteredEmailAddressEmployee('');
+            setEnteredUsernameEmployee('');
+            setEnteredPasswordEmployee('');
+            setEnteredConfirmPasswordEmployee('');
+            setIDNumberEmployee('');
+            setError('');
+        } else {
+            const errorData = await response.json();
+            setError(errorData.error || 'Employee account creation failed');
+        }
+    };
+
+    if (userRole !== 'admin') {
+        return (
+            <div style={{ textAlign: 'center' }}>
+                <h1>You do not have permission to access this page.</h1>
+            </div>
+        );
+    }
+
     return (
         <div
             style={{
@@ -27,8 +116,8 @@ const CreateEmployee = () =>{
         >
             <div className="register-container">
                 <div className="form-container">
-                    <h1>Customer Registration</h1>
-                    <form onSubmit={handleRegister}>
+                    <h1>Employee Creation</h1>
+                    <form onSubmit={handleEmployeeCreation}>
                         <div className="input-group">
                             <input
                                 type="text"
@@ -86,7 +175,7 @@ const CreateEmployee = () =>{
                                 required
                             />
                         </div>
-                        
+
                         <button type="submit" className="register-btn">Create Employee Account</button>
                     </form>
                     {error && <p className="error-message">{error}</p>}
@@ -95,4 +184,6 @@ const CreateEmployee = () =>{
             </div>
         </div>
     );
-}
+};
+
+export default CreateEmployee;
