@@ -204,7 +204,7 @@ router.get('/getUser', checkAuth, async (req, res) => {
 });
 
 // Create an Employee - Only accessible to admin or manager
-router.post('/createEmployee', checkAuth, checkRole(['admin', 'manager']), validateRegistrationInputs, async (req, res) => {
+router.post('/createEmployee', checkAuth, checkRole(['admin']), validateRegistrationInputs, async (req, res) => {
     const { firstName, lastName, email, username, password, idNumber, role } = req.body;
 
     try {

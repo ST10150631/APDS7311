@@ -132,11 +132,11 @@ const Dashboard = () => {
 
             if (response.ok) {
                 const result = await response.json();
-                
+
                 if (result.schema === 'User') {
                     setCustomerName(`${result.user.firstName} ${result.user.lastName}`);
                     setAccountNumber(result.user.accountNumber);
-                    setAvailableBalance(result.user.balance ? `$${result.user.balance.toFixed(2)}` : '$0.00');
+                    setAvailableBalance(result.user.balance ?? 0);
                     setUserRole(result.user.role);
                 } else if (result.schema === 'Admin') {
                     setCustomerName(`${result.admin.firstName} ${result.admin.lastName}`);
@@ -184,8 +184,8 @@ const Dashboard = () => {
         <div className="bgDashboard">
             <div className="TopNavbar">
                 <img src={Logo} className="logo" alt="Logo" />
-                <h1>Customer Dashboard</h1>
-                
+                <h1>{dashboardHeading}</h1>
+
             </div>
 
             <div className="Image-Banner">
@@ -194,11 +194,15 @@ const Dashboard = () => {
 
             <div className="dashboard-container">
                 <div className="navbar">
-                    <button className="nav-button" onClick={handleTransactions}>Transactions</button>
-                    <button className="nav-button" onClick={handleLocalPayment}>Local Payments</button>
-                    <button className="nav-button" onClick={handleAddFunds}>Deposit</button>
-                    <button className="nav-button" onClick={handleInternationalPayment}>International Payments</button>
-                    <button className="deny-button" onClick={handleLogout}>Logout</button> {/* Logout Button */}
+                    {userRole === 'user' && (
+                        <>
+                            <button className="nav-button" onClick={handleTransactions}>Transactions</button>
+                            <button className="nav-button" onClick={handleLocalPayment}>Local Payments</button>
+                            <button className="nav-button" onClick={handleAddFunds}>Deposit</button>
+                            <button className="nav-button" onClick={handleInternationalPayment}>International Payments</button>
+                        </>
+                    )}
+
 
                     {(userRole === 'employee' || userRole === 'admin') && (
                         <button className="nav-button" onClick={handleStaffTransactions}>Staff Transactions</button>
@@ -210,35 +214,37 @@ const Dashboard = () => {
                             <button className="nav-button" onClick={() => navigate('/CreateEmployee')}>Create Employee</button>
                         </>
                     )}
+
+                    <button className="deny-button" onClick={handleLogout}>Logout</button> {/* Logout Button */}
                 </div>
 
-                <div className="main-content">
-                    <h2>Hello, {customerName}</h2>
+                {userRole === 'user' && (
+                    <div className="main-content">
+                        <h2>Hello, {customerName}</h2>
 
-                    <h2>Payments</h2>
-                    <div>
-                        <button className="button" onClick={handleLocalPayment}>Make Local Payment</button>
-                        <button className="button" onClick={handleInternationalPayment}>Make International Payment</button>
-                    </div>
+                        <h2>Payments</h2>
+                        <div>
+                            <button className="button" onClick={handleLocalPayment}>Make Local Payment</button>
+                            <button className="button" onClick={handleInternationalPayment}>Make International Payment</button>
+                        </div>
 
-                    <h2>Banking Details</h2>
-                    <div>
-                        <strong>Current Account</strong>
-                        <div><span>Acc No: {accountNumber}</span></div>
-                        <div><span>Available Balance: {availableBalance}</span></div>
-                    </div>
-
-                    <h2>My Cards</h2>
-                    <div className="banking-details-container">
-                        <img src={card} alt="Swift Banking" className="banking-logo" />
-                        <div className="banking-details">
+                        <h2>Banking Details</h2>
+                        <div>
                             <strong>Current Account</strong>
-                            <div><span>Name: {customerName}</span></div>
                             <div><span>Acc No: {accountNumber}</span></div>
                             <div><span>Available Balance: {availableBalance}</span></div>
-                            <div><span>Role: {userRole}</span></div>
                         </div>
-                    </div>
+
+                        <h2>My Cards</h2>
+                        <div className="banking-details-container">
+                            <img src={card} alt="Swift Banking" className="banking-logo" />
+                            <div className="banking-details">
+                                <strong>Current Account</strong>
+                                <div><span>Name: {customerName}</span></div>
+                                <div><span>Acc No: {accountNumber}</span></div>
+                                <div><span>Available Balance: {availableBalance}</span></div>
+                            </div>
+                        </div>
 
                         <h2>Payment Receipts</h2>
                         <table className="transaction-table">
@@ -269,6 +275,8 @@ const Dashboard = () => {
                         </table>
                     </div>
                 )}
+
+
                 {userRole === 'admin' && (
                     <div className="user-content">
                         <h2>Select Role to View Users</h2>
@@ -277,7 +285,6 @@ const Dashboard = () => {
                             <option value="users">Users</option>
                             <option value="admins">Admins</option>
                             <option value="employees">Employees</option>
-                            <option value="managers">Managers</option>
                         </select>
 
                         <h2>All Users</h2>
