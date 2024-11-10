@@ -2,46 +2,56 @@ const express = require("express");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const ExpressBrute = require("express-brute");
-const { User, Account, Employee,Admin,Manager } = require('./models'); // Import models from the new models file
+const { User, Account, Employee, Admin, Manager } = require('./models');
 const checkAuth = require("../check-auth");
 require('dotenv').config();
-const ValidationUtils = require('../utils/validationUtils'); 
+const ValidationUtils = require('../utils/validationUtils');
 const helmet = require("helmet");
 const checkRole = require('../RoleMiddleware/roleMiddleware');
 
 const router = express.Router();
 router.use(helmet());
-const store = new ExpressBrute.MemoryStore(); 
+const store = new ExpressBrute.MemoryStore();
 //const bruteforce = new ExpressBrute(store);
 
-const bruteforce = new ExpressBrute(store, 
+const bruteforce = new ExpressBrute(store,
     {
-    freeRetries: 5,               
-    minWait: 5 * 60 * 1000,       
-    maxWait: 15 * 60 * 1000       
+        freeRetries: 5,
+        minWait: 5 * 60 * 1000,
+        maxWait: 15 * 60 * 1000
     });
-//------------------------------------------------------//
-// Handle the POST request for registration
-router.post('/register', async (req, res) => {
-    const { firstName, lastName, email, username, password, idNumber,role } = req.body;
 
-    // Validate user inputs before proceeding
+
+
+const validateRegistrationInputs = (req, res, next) => {
+    const { firstName, lastName, email, username, password, confirmPassword, idNumber } = req.body;
+
+    if (password != confirmPassword) {
+        return res.status(400).send({ error: "Passwords do not match." });
+    }
+    if (!ValidationUtils.validatePassword(password)) {
+        return res.status(400).send({ error: "Invalid Password. Password must be 8-30 chars, include at least one number, one letter, and one special character." });
+    }    
     if (!ValidationUtils.validateName(firstName) || !ValidationUtils.validateName(lastName)) {
         return res.status(400).send({ error: "Invalid first or last name. Use only letters." });
     }
-
     if (!ValidationUtils.validateEmail(email)) {
         return res.status(400).send({ error: "Invalid email format." });
     }
-
     if (!ValidationUtils.validateUsername(username)) {
         return res.status(400).send({ error: "Invalid username. Use only alphanumeric characters (3-20)." });
     }
-
-
     if (!ValidationUtils.validateIDNumber(idNumber)) {
         return res.status(400).send({ error: "Invalid South African ID number. Must be 13 digits." });
     }
+
+    next();
+};
+
+//------------------------------------------------------//
+// Handle the POST request for registration
+router.post('/register', validateRegistrationInputs, async (req, res) => {
+    const { firstName, lastName, email, username, password, idNumber, role } = req.body;
 
     try {
         const accountNumber = 'AC' + Math.floor(1000000000 + Math.random() * 9000000000);
@@ -50,16 +60,16 @@ router.post('/register', async (req, res) => {
         const salt = await bcrypt.genSalt(10);  // 10 rounds of salt
         const hashedPassword = await bcrypt.hash(password, salt);
 
-        const user = new User({ 
-            firstName, 
-            lastName, 
-            email, 
-            username, 
-            password: hashedPassword, 
+        const user = new User({
+            firstName,
+            lastName,
+            email,
+            username,
+            password: hashedPassword,
             idNumber,
             role: role || "user"
         });
-        
+
         const savedUser = await user.save();
 
         const account = new Account({
@@ -82,13 +92,13 @@ router.post('/login', bruteforce.prevent, async (req, res) => {
     const { username, password } = req.body;
 
     try {
-        let user = await User.findOne({ username });
+        let user = await User.findOne().where('username').equals(username);
         if (!user) {
             // Check if the username exists in the Admin schema
-            user = await Admin.findOne({ username });
+            user = await Admin.findOne().where('username').equals(username);
             if (!user) {
                 // Check if the username exists in the Employee schema
-                user = await Employee.findOne({ username });
+                user = await Employee.findOne().where('username').equals(username);
                 if (!user) {
                     return res.status(401).send({ error: "Invalid username or password" });
                 }
@@ -103,12 +113,12 @@ router.post('/login', bruteforce.prevent, async (req, res) => {
 
         // Generate a JWT for the user, including the role in the payload
         const token = jwt.sign(
-            { 
-                id: user._id, 
+            {
+                id: user._id,
                 username: user.username,
                 role: user.role  // Include the role in the token
-            }, 
-            process.env.JWT_SECRET, 
+            },
+            process.env.JWT_SECRET,
             { expiresIn: '1h' }
         );
 
@@ -126,8 +136,6 @@ router.post('/login', bruteforce.prevent, async (req, res) => {
         res.status(500).send({ error: "Internal server error" });
     }
 });
-
-
 
 //------------------------------------------------------//
 
@@ -176,10 +184,10 @@ router.get('/getUser', checkAuth, async (req, res) => {
                 idNumber: admins.idNumber,
                 role: admins.role
             },
-           // admins: admins.map(admin => ({
-              //  id: admin._id,
-              //  userId: admin.userId,
-               // role: admin.role,
+            // admins: admins.map(admin => ({
+            //  id: admin._id,
+            //  userId: admin.userId,
+            // role: admin.role,
             //})),
             employees: employees.map(employee => ({
                 id: employee._id,
@@ -196,7 +204,7 @@ router.get('/getUser', checkAuth, async (req, res) => {
 });
 
 // Create an Employee - Only accessible to admin or manager
-router.post('/createEmployee', checkAuth, checkRole(['admin', 'manager']), async (req, res) => {
+router.post('/createEmployee', checkAuth, checkRole(['admin', 'manager']), validateRegistrationInputs, async (req, res) => {
     const { firstName, lastName, email, username, password, idNumber, role } = req.body;
 
     try {
@@ -224,7 +232,7 @@ router.post('/createEmployee', checkAuth, checkRole(['admin', 'manager']), async
 //const Admin = require('./models/Admin'); // Import the Admin model
 
 // Create Admin - Only accessible to admin
-router.post('/createAdmin', checkAuth, checkRole(['admin']), async (req, res) => {
+router.post('/createAdmin', checkAuth, checkRole(['admin']), validateRegistrationInputs, async (req, res) => {
     const { firstName, lastName, email, username, password, idNumber } = req.body;
 
     try {
@@ -251,13 +259,8 @@ router.post('/createAdmin', checkAuth, checkRole(['admin']), async (req, res) =>
 //const { Manager } = require('./models'); // Ensure this path is correct
 
 // Define the route to create a manager
-router.post('/createManager', checkAuth, checkRole(['admin']), async (req, res) => {
+router.post('/createManager', checkAuth, checkRole(['admin']), validateRegistrationInputs, async (req, res) => {
     const { firstName, lastName, email, username, password, idNumber } = req.body;
-
-    // Validate the inputs (add custom validation if needed)
-    if (!firstName || !lastName || !email || !username || !password || !idNumber) {
-        return res.status(400).send({ error: "All fields are required" });
-    }
 
     try {
         // Generate a salt and hash the password
@@ -290,7 +293,7 @@ router.get('/getUserByUsername', checkAuth, async (req, res) => {
 
     try {
         // Search for the username in the User schema
-        let user = await User.findOne({ username });
+        let user = await User.findOne().where('username').equals(username);
 
         if (user) {
             // If a user is found, return user data
@@ -309,7 +312,7 @@ router.get('/getUserByUsername', checkAuth, async (req, res) => {
         }
 
         // If no user found, check the Admin schema
-        let admin = await Admin.findOne({ username });
+        let admin = await Admin.findOne().where('username').equals(username);
         if (admin) {
             // If an admin is found, return admin data
             return res.json({
@@ -325,7 +328,7 @@ router.get('/getUserByUsername', checkAuth, async (req, res) => {
         }
 
         // If no admin found, check the Employee schema
-        let employee = await Employee.findOne({ username });
+        let employee = await Employee.findOne().where('username').equals(username);
         if (employee) {
             // If an employee is found, return employee data
             return res.json({
@@ -383,12 +386,12 @@ router.get('/allUsers', checkAuth, checkRole(['admin']), async (req, res) => {
 router.delete('/deleteUser/:id', checkAuth, checkRole(['admin']), async (req, res) => {
     try {
         const { id } = req.params;
-        
+
         // Delete user by ID
         await User.findByIdAndDelete(id) ||
-        await Admin.findByIdAndDelete(id) ||
-        await Employee.findByIdAndDelete(id) ||
-        await Manager.findByIdAndDelete(id);
+            await Admin.findByIdAndDelete(id) ||
+            await Employee.findByIdAndDelete(id) ||
+            await Manager.findByIdAndDelete(id);
 
         res.status(200).json({ message: 'User successfully deleted' });
     } catch (error) {

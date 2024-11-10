@@ -4,11 +4,14 @@ import '../index.css';
 import bannerImage from '../Img/TransferBG.png';
 import Logo from '../Img/SWIFT BANKING.png';
 import './styles/TransactionTable.css';
+import { jwtDecode } from 'jwt-decode';
 
 const StaffTransactions = () => {
     const [transactions, setTransactions] = useState([]); // State to hold transactions
     const [filteredTransactions, setFilteredTransactions] = useState([]); // State to hold filtered transactions
     const [statusFilter, setStatusFilter] = useState('All'); // State for dropdown filter
+    const [customerName, setCustomerName] = useState('');
+    const [userRole, setUserRole] = useState('');
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -35,6 +38,7 @@ const StaffTransactions = () => {
         };
 
         fetchTransactions();
+        fetchUserByUsername();
     }, []); // Empty dependency array ensures this runs only once after the component mounts
 
     // Handle Confirm action
@@ -91,6 +95,41 @@ const StaffTransactions = () => {
         } catch (error) {
             console.error("Error denying transaction:", error);
         }
+    };
+    const fetchUserByUsername = async () => {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            navigate('/login');
+            return;
+        }
+
+        try {
+            const decodedToken = jwtDecode(token);
+            const username = decodedToken.username;
+
+            const response = await fetch(`https://localhost:3001/user/getUserByUsername?username=${username}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                if (result.schema === 'Admin') {
+                    setCustomerName(`${result.admin.firstName} ${result.admin.lastName}`);
+                    setUserRole(result.admin.role);
+                } else if (result.schema === 'Employee') {
+                    setCustomerName(`${result.employee.firstName} ${result.employee.lastName}`);
+                    setUserRole(result.employee.role);
+                }
+            } else {
+                console.error('Failed to fetch user data');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        } 
     };
 
     // Handle Flag action
@@ -153,14 +192,17 @@ const StaffTransactions = () => {
                 {/* Side Menu */}
                 <div className="navbar">
                     <button className="nav-button" onClick={() => navigate('/Dashboard')}>Dashboard</button>
-                    <button className="nav-button" onClick={() => navigate('/LocalPayments')}>Local Payments</button>
-                    <button className="nav-button" onClick={() => navigate('/AddFunds')}>Add Funds</button>
-                    <button className="nav-button" onClick={() => navigate('/InternationalPayments')}>International Payments</button>
+                    {userRole === 'admin' && (
+                        <>
+                            <button className="nav-button" onClick={() => navigate('/CreateAdmin')}>Admin Creation</button>
+                            <button className="nav-button" onClick={() => navigate('/CreateEmployee')}>Create Employee</button>
+                        </>
+                    )}
                 </div>
 
                 {/* Main Content */}
                 <div className="transaction-content">
-                    <h2>Hello, Mike</h2>
+                    <h2>Hello, {customerName}</h2>
 
                     <h2>Transaction History</h2>
 
