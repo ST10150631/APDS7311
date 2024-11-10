@@ -349,5 +349,53 @@ router.get('/getUserByUsername', checkAuth, async (req, res) => {
     }
 });
 
+router.get('/allUsers', checkAuth, checkRole(['admin']), async (req, res) => {
+    try {
+        const { role } = req.query; // Get role from query parameters
+        let users = [], admins = [], employees = [], managers = [];
+
+        if (role === 'user') {
+            users = await User.find().select('-password');
+        } else if (role === 'admin') {
+            admins = await Admin.find().select('-password');
+        } else if (role === 'employee') {
+            employees = await Employee.find().select('-password');
+        } else if (role === 'manager') {
+            managers = await Manager.find().select('-password');
+        } else {
+            // Fetch all users if no specific role is requested
+            users = await User.find().select('-password');
+            admins = await Admin.find().select('-password');
+            employees = await Employee.find().select('-password');
+            managers = await Manager.find().select('-password');
+        }
+
+        // Combine all fetched users
+        const allUsers = { users, admins, employees, managers };
+        res.status(200).json(allUsers);
+    } catch (error) {
+        console.error('Error fetching all users:', error);
+        res.status(500).json({ error: "Failed to retrieve users" });
+    }
+});
+
+// In your Express route file (e.g., userRoutes.js)
+router.delete('/deleteUser/:id', checkAuth, checkRole(['admin']), async (req, res) => {
+    try {
+        const { id } = req.params;
+        
+        // Delete user by ID
+        await User.findByIdAndDelete(id) ||
+        await Admin.findByIdAndDelete(id) ||
+        await Employee.findByIdAndDelete(id) ||
+        await Manager.findByIdAndDelete(id);
+
+        res.status(200).json({ message: 'User successfully deleted' });
+    } catch (error) {
+        console.error('Error deleting user:', error);
+        res.status(500).json({ error: 'Failed to delete user' });
+    }
+});
+
 module.exports = router;
 //---------------------------------END OF FILE------------------------------//
