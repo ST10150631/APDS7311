@@ -44,7 +44,7 @@ const StaffTransactions = () => {
 
     const handleLogout = () => {
         localStorage.removeItem('token');  // Remove token from localStorage
-        navigate('/login');                // Redirect to login page
+        navigate('/');                // Redirect to landing page
     };
 
     // Handle Confirm action
@@ -188,14 +188,14 @@ const StaffTransactions = () => {
             <div className="dashboard-container">
                 {/* Side Menu */}
                 <div className="navbar">
-                    <button className="nav-button" onClick={() => navigate('/Dashboard')}>Dashboard</button>
-                    <button className="deny-button" onClick={handleLogout}>Logout</button> {/* Logout Button */}
                     {userRole === 'admin' && (
                         <>
+                            <button className="nav-button" onClick={() => navigate('/Dashboard')}>Dashboard</button>
                             <button className="nav-button" onClick={() => navigate('/CreateAdmin')}>Admin Creation</button>
                             <button className="nav-button" onClick={() => navigate('/CreateEmployee')}>Create Employee</button>
                         </>
                     )}
+                    <button className="deny-button" onClick={handleLogout}>Logout</button> {/* Logout Button */}
                 </div>
 
                 {/* Main Content */}

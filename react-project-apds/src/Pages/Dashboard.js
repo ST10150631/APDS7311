@@ -159,7 +159,7 @@ const Dashboard = () => {
 
     const handleLogout = () => {
         localStorage.removeItem('token');  // Remove token from localStorage
-        navigate('/login');                // Redirect to login page
+        navigate('/');                // Redirect to login page
     };
 
     const handleLocalPayment = () => navigate('/localpayments');
