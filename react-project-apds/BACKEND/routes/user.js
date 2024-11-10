@@ -22,6 +22,7 @@ const bruteforce = new ExpressBrute(store,
     });
 
 
+
 const validateRegistrationInputs = (req, res, next) => {
     const { firstName, lastName, email, username, password, confirmPassword, idNumber } = req.body;
 
@@ -91,13 +92,15 @@ router.post('/login', bruteforce.prevent, async (req, res) => {
     const { username, password } = req.body;
 
     try {
-        let user = await User.findOne({ username });
+        let userList = await User.find();
+        let user = userList.find(user => user.username === username);
         if (!user) {
             // Check if the username exists in the Admin schema
-            user = await Admin.findOne({ username });
+            user = await Admin.find()
+                .then(admins => admins.find(admin => admin.username === username));
             if (!user) {
                 // Check if the username exists in the Employee schema
-                user = await Employee.findOne({ username });
+                user = await Employee.findOne().where('username').equals(username);
                 if (!user) {
                     return res.status(401).send({ error: "Invalid username or password" });
                 }
@@ -135,8 +138,6 @@ router.post('/login', bruteforce.prevent, async (req, res) => {
         res.status(500).send({ error: "Internal server error" });
     }
 });
-
-
 
 //------------------------------------------------------//
 
