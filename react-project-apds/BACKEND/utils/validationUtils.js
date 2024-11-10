@@ -17,6 +17,13 @@ class ValidationUtils {
         return this.validateAgainstBlacklist(username);
     }
 
+
+    // Whitelist: Password must be 8-30 chars, include at least one number, one letter, and one special character
+    static validatePassword(password) {
+        const passwordRegex = /^(?=.[A-Za-z])(?=.\d)(?=.[!@#$%^&()_+{}\[\]:;"'<>,.?/~`|\\-]).{8,30}$/;
+        return passwordRegex.test(password);
+    }
+
     // Whitelist: Basic email validation
     static validateEmail(email) {
         const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
