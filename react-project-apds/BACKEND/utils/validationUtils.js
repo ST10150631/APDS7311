@@ -20,7 +20,7 @@ class ValidationUtils {
 
     // Whitelist: Password must be 8-30 chars, include at least one number, one letter, and one special character
     static validatePassword(password) {
-        const passwordRegex = /^(?=.[A-Za-z])(?=.\d)(?=.[!@#$%^&()_+{}\[\]:;"'<>,.?/~`|\\-]).{8,30}$/;
+        const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&()_+{}\[\]:;"'<>,.?/~`|\\-]).{8,30}$/;
         return passwordRegex.test(password);
     }
 
