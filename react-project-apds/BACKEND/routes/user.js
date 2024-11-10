@@ -92,12 +92,10 @@ router.post('/login', bruteforce.prevent, async (req, res) => {
     const { username, password } = req.body;
 
     try {
-        let userList = await User.find();
-        let user = userList.find(user => user.username === username);
+        let user = await User.findOne().where('username').equals(username);
         if (!user) {
             // Check if the username exists in the Admin schema
-            user = await Admin.find()
-                .then(admins => admins.find(admin => admin.username === username));
+            user = await Admin.findOne().where('username').equals(username);
             if (!user) {
                 // Check if the username exists in the Employee schema
                 user = await Employee.findOne().where('username').equals(username);
@@ -295,7 +293,7 @@ router.get('/getUserByUsername', checkAuth, async (req, res) => {
 
     try {
         // Search for the username in the User schema
-        let user = await User.findOne({ username });
+        let user = await User.findOne().where('username').equals(username);
 
         if (user) {
             // If a user is found, return user data
@@ -314,7 +312,7 @@ router.get('/getUserByUsername', checkAuth, async (req, res) => {
         }
 
         // If no user found, check the Admin schema
-        let admin = await Admin.findOne({ username });
+        let admin = await Admin.findOne().where('username').equals(username);
         if (admin) {
             // If an admin is found, return admin data
             return res.json({
@@ -330,7 +328,7 @@ router.get('/getUserByUsername', checkAuth, async (req, res) => {
         }
 
         // If no admin found, check the Employee schema
-        let employee = await Employee.findOne({ username });
+        let employee = await Employee.findOne().where('username').equals(username);
         if (employee) {
             // If an employee is found, return employee data
             return res.json({
