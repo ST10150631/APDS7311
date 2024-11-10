@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './styles/Register.css';
-
+import { jwtDecode } from 'jwt-decode'; // Corrected import
 const CreateEmployee = () => {
     const [enteredFirstNameEmployee, setEnteredFirstNameEmployee] = useState('');
     const [enteredLastNameEmployee, setEnteredLastNameEmployee] = useState('');
@@ -16,38 +16,19 @@ const CreateEmployee = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        // Fetch user data to check if the logged-in user is an admin
-        const fetchUserData = async () => {
-            const token = localStorage.getItem('token');
-            if (!token) {
-                navigate('/login');
-                return;
-            }
-
+        const token = localStorage.getItem('token');
+        console.log('Token from localStorage:', token); // Check the token value
+        if (token) {
             try {
-                const response = await fetch('https://localhost:3001/user/getUser', {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json',
-                    },
-                });
-
-                if (response.ok) {
-                    const result = await response.json();
-                    setUserRole(result.user.role); // Set the role of the logged-in user
-                } else {
-                    navigate('/login');
-                }
+                const decodedToken = jwtDecode(token);
+                setUserRole(decodedToken.role);
             } catch (error) {
-                console.error('Error:', error);
-                navigate('/login');
+                console.error('Error decoding token:', error);
+                setUserRole('');
             }
-        };
-
-        fetchUserData();
-    }, [navigate]);
-
+        }
+    }, []);
+    
     const handleEmployeeCreation = async (e) => {
         e.preventDefault();
 

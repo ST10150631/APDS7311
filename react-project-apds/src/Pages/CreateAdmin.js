@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { jwtDecode } from 'jwt-decode'; // Corrected import
 import './styles/Register.css';
 const CreateAdmin = () => {
-    
+
     const [enteredFirstNameAdmin, setEnteredFirstNameAdmin] = useState('');
     const [enteredLastNameAdmin, setEnteredLastNameAdmin] = useState('');
     const [enteredEmailAddressAdmin, setEnteredEmailAddressAdmin] = useState('');
@@ -10,10 +11,25 @@ const CreateAdmin = () => {
     const [enteredPasswordAdmin, setEnteredPasswordAdmin] = useState('');
     const [enteredConfirmPasswordAdmin, setEnteredConfirmPasswordAdmin] = useState('');
     const [enteredIDNumberAdmin, setIDNumberAdmin] = useState('');
-    const [error, setError] = useState(''); 
-    const [successMessage, setSuccessMessage] = useState(''); 
+    const [error, setError] = useState('');
+    const [successMessage, setSuccessMessage] = useState('');
+    const [userRole, setUserRole] = useState(''); // Initialize role state
 
     const navigate = useNavigate();
+
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        console.log('Token from localStorage:', token); // Check the token value
+        if (token) {
+            try {
+                const decodedToken = jwtDecode(token);
+                setUserRole(decodedToken.role);
+            } catch (error) {
+                console.error('Error decoding token:', error);
+                setUserRole('');
+            }
+        }
+    }, []);
 
     const handleAdminCreation = async (e) => {
         e.preventDefault();
@@ -27,35 +43,44 @@ const CreateAdmin = () => {
             idNumber: enteredIDNumberAdmin
         };
 
-            const response = await fetch('https://localhost:3001/user/createAdmin', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(adminData),
-            });
+        const token = localStorage.getItem('token');
+        const response = await fetch('https://localhost:3001/user/createAdmin', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`, // Add this line to send the token
+            },
+            body: JSON.stringify(adminData),
+        });
 
-            if (response.ok) {
-                const result = await response.json();
-                setSuccessMessage('Admin account created successfully!');
-                //console.log('User registered successfully:', result);
-                navigate('/dashboard'); 
-                setEnteredFirstNameAdmin('');
-                setEnteredLastNameAdmin('');
-                setEnteredEmailAddressAdmin('');
-                setEnteredUsernameAdmin('');
-                setEnteredPasswordAdmin('');
-                setEnteredConfirmPasswordAdmin('');
-                
-                setIDNumberAdmin('');
-                setError('');
-            } else {
-                const errorData = await response.json();
-                setError(errorData.error || 'Admin account creation failed');
-                console.error('Admin account creation failed:', errorData);
-            }
+        if (response.ok) {
+            const result = await response.json();
+            setSuccessMessage('Admin account created successfully!');
+            //console.log('User registered successfully:', result);
+            navigate('/dashboard');
+            setEnteredFirstNameAdmin('');
+            setEnteredLastNameAdmin('');
+            setEnteredEmailAddressAdmin('');
+            setEnteredUsernameAdmin('');
+            setEnteredPasswordAdmin('');
+            setEnteredConfirmPasswordAdmin('');
+
+            setIDNumberAdmin('');
+            setError('');
+        } else {
+            const errorData = await response.json();
+            setError(errorData.error || 'Admin account creation failed');
+            console.error('Admin account creation failed:', errorData);
+        }
     };
-
+    // Redirect or show a message if the user is not an admin
+    if (userRole !== 'admin') {
+        return (
+            <div style={{ textAlign: 'center' }}>
+                <h1>You do not have permission to access this page.</h1>
+            </div>
+        );
+    }
     return (
         <div
             style={{
@@ -134,7 +159,7 @@ const CreateAdmin = () => {
                                 required
                             />
                         </div>
-                        
+
                         <button type="submit" className="register-btn">Create Admin Account</button>
                     </form>
                     {error && <p className="error-message">{error}</p>}
@@ -142,6 +167,6 @@ const CreateAdmin = () => {
                 </div>
             </div>
         </div>
-);
+    );
 }
 export default CreateAdmin;
