@@ -14,36 +14,39 @@ const StaffTransactions = () => {
     const [userRole, setUserRole] = useState('');
     const navigate = useNavigate();
 
-    useEffect(() => {
-        const fetchTransactions = async () => {
-            try {
-                const response = await fetch('https://localhost:3001/payment/transactions/all', {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${localStorage.getItem('token')}`
-                    },
-                });
+    // Fetch transactions and update state
+    const fetchTransactions = async () => {
+        try {
+            const response = await fetch('https://localhost:3001/payment/transactions/all', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                },
+            });
 
-                if (response.ok) {
-                    const data = await response.json();
-                    setTransactions(data); // Set all transactions to state
-                    setFilteredTransactions(data); // Initially show all transactions
-                } else {
-                    console.error("Failed to fetch transactions");
-                }
-            } catch (error) {
-                console.error("Error fetching transactions:", error);
+            if (response.ok) {
+                const data = await response.json();
+                setTransactions(data); // Set all transactions to state
+                setFilteredTransactions(data); // Initially show all transactions
+            } else {
+                console.error("Failed to fetch transactions");
             }
-        };
+        } catch (error) {
+            console.error("Error fetching transactions:", error);
+        }
+    };
 
-        fetchTransactions();
+    useEffect(() => {
+        fetchTransactions(); // Fetch transactions on mount
         fetchUserByUsername();
     }, []); // Empty dependency array ensures this runs only once after the component mounts
+
     const handleLogout = () => {
         localStorage.removeItem('token');  // Remove token from localStorage
         navigate('/login');                // Redirect to login page
     };
+
     // Handle Confirm action
     const handleConfirm = async (transactionId) => {
         try {
@@ -57,13 +60,8 @@ const StaffTransactions = () => {
             });
 
             if (response.ok) {
-                setTransactions(prevTransactions =>
-                    prevTransactions.map(transaction =>
-                        transaction._id === transactionId ? { ...transaction, status: 'confirmed' } : transaction
-                    )
-                );
-                // Re-filter transactions after confirming
-                filterTransactions(statusFilter);
+                // Re-fetch the transactions to refresh the table
+                refreshTable();
             } else {
                 console.error("Failed to confirm transaction");
             }
@@ -85,13 +83,8 @@ const StaffTransactions = () => {
             });
 
             if (response.ok) {
-                setTransactions(prevTransactions =>
-                    prevTransactions.map(transaction =>
-                        transaction._id === transactionId ? { ...transaction, status: 'denied' } : transaction
-                    )
-                );
-                // Re-filter transactions after denying
-                filterTransactions(statusFilter);
+                // Re-fetch the transactions to refresh the table
+                refreshTable();
             } else {
                 console.error("Failed to deny transaction");
             }
@@ -99,6 +92,35 @@ const StaffTransactions = () => {
             console.error("Error denying transaction:", error);
         }
     };
+
+    // Handle Flag action
+    const handleFlag = async (transactionId) => {
+        try {
+            const response = await fetch(`https://localhost:3001/payment/transaction/${transactionId}/status`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                },
+                body: JSON.stringify({ status: 'flagged' }) // Flag status
+            });
+
+            if (response.ok) {
+                // Re-fetch the transactions to refresh the table
+                refreshTable();
+            } else {
+                console.error("Failed to flag transaction");
+            }
+        } catch (error) {
+            console.error("Error flagging transaction:", error);
+        }
+    };
+
+    // Function to refresh table by re-fetching transactions
+    const refreshTable = () => {
+        fetchTransactions(); // Re-fetch the transactions to update the table
+    };
+
     const fetchUserByUsername = async () => {
         const token = localStorage.getItem('token');
         if (!token) {
@@ -133,34 +155,6 @@ const StaffTransactions = () => {
         } catch (error) {
             console.error('Error:', error);
         } 
-    };
-
-    // Handle Flag action
-    const handleFlag = async (transactionId) => {
-        try {
-            const response = await fetch(`https://localhost:3001/payment/transaction/${transactionId}/status`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`
-                },
-                body: JSON.stringify({ status: 'flagged' }) // Flag status
-            });
-
-            if (response.ok) {
-                setTransactions(prevTransactions =>
-                    prevTransactions.map(transaction =>
-                        transaction._id === transactionId ? { ...transaction, status: 'flagged' } : transaction
-                    )
-                );
-                // Re-filter transactions after flagging
-                filterTransactions(statusFilter);
-            } else {
-                console.error("Failed to flag transaction");
-            }
-        } catch (error) {
-            console.error("Error flagging transaction:", error);
-        }
     };
 
     // Handle dropdown change
@@ -206,10 +200,9 @@ const StaffTransactions = () => {
 
                 {/* Main Content */}
                 <div className="transaction-content">
-                    <h2 class ="textBlack" 
-                    >Hello, {customerName}</h2>
+                    <h2 class="textBlack">Hello, {customerName}</h2>
 
-                    <h2 class ="textBlack">Transaction History</h2>
+                    <h2 class="textBlack">Transaction History</h2>
 
                     {/* Dropdown to filter by status */}
                     <div>

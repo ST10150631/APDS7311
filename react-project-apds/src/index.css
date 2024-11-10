@@ -106,7 +106,7 @@
     border-radius: 15px; /* Rounded corners */
     align-self: center; /* This can be removed, as it's not necessary with margin: auto */
     margin: 20px auto; /* Center horizontally and add vertical margin */
-    max-width: 1000px; /* Set a max-width for better readability */
+    max-width: 1200px; /* Set a max-width for better readability */
     width: 100%; /* Responsive width */
 }
 
@@ -145,8 +145,24 @@
     transition: background-color 0.3s ease; /* Smooth transition on hover */
   }
   
+  /* Green button for confirm */
   .confirm-button:hover {
     background-color: #009130; /* Darker green on hover */
+  }
+.view-button {
+    background-color: white; /* Green background */
+    color: rgb(4, 131, 251);            /* White text */
+    border: 2px solid rgb(4, 131, 251); /* Green border */
+    padding: 10px 20px;      /* Add padding for size */
+    font-size: 16px;         /* Adjust font size */
+    cursor: pointer;        /* Change cursor to pointer when hovered */
+    border-radius: 5px;      /* Rounded corners */
+    transition: background-color 0.3s ease; /* Smooth transition on hover */
+  }
+  .view-button:hover {
+    color: white; 
+    background-color: rgb(4, 131, 251);
+    border:  #76ffff; 
   }
   
   /* Red button for deny */
