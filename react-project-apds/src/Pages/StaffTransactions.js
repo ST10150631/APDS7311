@@ -202,9 +202,10 @@ const StaffTransactions = () => {
 
                 {/* Main Content */}
                 <div className="transaction-content">
-                    <h2>Hello, {customerName}</h2>
+                    <h2 class ="textBlack" 
+                    >Hello, {customerName}</h2>
 
-                    <h2>Transaction History</h2>
+                    <h2 class ="textBlack">Transaction History</h2>
 
                     {/* Dropdown to filter by status */}
                     <div>

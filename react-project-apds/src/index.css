@@ -24,6 +24,9 @@
     margin-top: 0px;
     background: linear-gradient(180deg, #034078, #0a1128); /* Gradient for the entire background */
 }
+.textBlack {
+    color: #000000;
+}
 
 .TopNavbar {
     display: flex;
@@ -103,7 +106,7 @@
     border-radius: 15px; /* Rounded corners */
     align-self: center; /* This can be removed, as it's not necessary with margin: auto */
     margin: 20px auto; /* Center horizontally and add vertical margin */
-    max-width: 900px; /* Set a max-width for better readability */
+    max-width: 1000px; /* Set a max-width for better readability */
     width: 100%; /* Responsive width */
 }
 

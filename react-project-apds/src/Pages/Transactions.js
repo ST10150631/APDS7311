@@ -66,9 +66,9 @@ const Dashboard = () => {
 
                 {/* Main Content */}
                 <div className="main-table-content">
-                    <h2>Hello, Mike</h2>
+                    <h2 className="textBlack">Hello, Mike</h2>
 
-                    <h2>Transaction History</h2>
+                    <h2 className="textBlack">Transaction History</h2>
 
                     {/* Transaction Table */}
                     <table className="transaction-table">
@@ -79,6 +79,8 @@ const Dashboard = () => {
                                 <th>Recipient Bank</th>
                                 <th>Amount</th>
                                 <th>SWIFT Code</th>
+                                <th>Transaction Status</th>
+                                <th>Payment Type</th>
                             </tr>
                         </thead>
                         <tbody>
