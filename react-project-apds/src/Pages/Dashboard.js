@@ -3,9 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import '../index.css';
 import bannerImage from '../Img/skyscrapers.jpeg';
 import Logo from '../Img/SWIFT BANKING.png';
-import card from '../Img/Swift Card.png'
+import card from '../Img/Swift Card.png';
 import './styles/Navbar.css';
 import { jwtDecode } from 'jwt-decode';
+
 const Dashboard = () => {
     const [customerName, setCustomerName] = useState('');
     const [accountNumber, setAccountNumber] = useState('');
@@ -13,7 +14,7 @@ const Dashboard = () => {
     const [userRole, setUserRole] = useState('');
     const [loading, setLoading] = useState(true);
     const [transactions, setTransactions] = useState([]);
-
+    
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -37,11 +38,12 @@ const Dashboard = () => {
             } catch (error) {
                 console.error("Error fetching transactions:", error);
             } finally {
-                setLoading(false);  // Set loading to false after fetching
+                setLoading(false);
             }
         };
 
         fetchTransactions();
+        fetchUserByUsername();
     }, []);
 
     const fetchUserByUsername = async () => {
@@ -50,16 +52,11 @@ const Dashboard = () => {
             navigate('/login');
             return;
         }
-    
+
         try {
-            // Decode the JWT token
             const decodedToken = jwtDecode(token);
-            console.log("Decoded Token:", decodedToken); // Log the entire decoded token
-    
             const username = decodedToken.username;
-            console.log("Username from Token:", username); // Log the username to ensure it's correct
-    
-            // Fetch user data using the decoded username
+
             const response = await fetch(`https://localhost:3001/user/getUserByUsername?username=${username}`, {
                 method: 'GET',
                 headers: {
@@ -67,11 +64,10 @@ const Dashboard = () => {
                     'Content-Type': 'application/json',
                 },
             });
-    
+
             if (response.ok) {
                 const result = await response.json();
-                console.log("API Response:", result);  // Log the API response to see if data is correct
-    
+                
                 if (result.schema === 'User') {
                     setCustomerName(`${result.user.firstName} ${result.user.lastName}`);
                     setAccountNumber(result.user.accountNumber);
@@ -81,12 +77,10 @@ const Dashboard = () => {
                     setCustomerName(`${result.admin.firstName} ${result.admin.lastName}`);
                     setAvailableBalance(result.admin.balance ? `$${result.admin.balance.toFixed(2)}` : '$0.00');
                     setUserRole(result.admin.role);
-                    console.log("Role", result.admin.role);
                 } else if (result.schema === 'Employee') {
                     setCustomerName(`${result.employee.firstName} ${result.employee.lastName}`);
                     setAccountNumber(result.employee.accountNumber);
                     setUserRole(result.employee.role);
-                    console.log("Role", result.employee.role);
                 }
             } else {
                 console.error('Failed to fetch user data');
@@ -94,16 +88,15 @@ const Dashboard = () => {
         } catch (error) {
             console.error('Error:', error);
         } finally {
-            setLoading(false);  // Set loading to false after fetching
+            setLoading(false);
         }
     };
-    fetchUserByUsername();
 
+    const handleLogout = () => {
+        localStorage.removeItem('token');  // Remove token from localStorage
+        navigate('/login');                // Redirect to login page
+    };
 
-    // Function to fetch user details by username
-
-
-    // Handle navigation for various actions
     const handleLocalPayment = () => navigate('/localpayments');
     const handleAddFunds = () => navigate('/addfunds');
     const handleTransactions = () => navigate('/Transactions');
@@ -119,6 +112,7 @@ const Dashboard = () => {
             <div className="TopNavbar">
                 <img src={Logo} className="logo" alt="Logo" />
                 <h1>Customer Dashboard</h1>
+                
             </div>
 
             <div className="Image-Banner">
@@ -131,6 +125,7 @@ const Dashboard = () => {
                     <button className="nav-button" onClick={handleLocalPayment}>Local Payments</button>
                     <button className="nav-button" onClick={handleAddFunds}>Deposit</button>
                     <button className="nav-button" onClick={handleInternationalPayment}>International Payments</button>
+                    <button className="deny-button" onClick={handleLogout}>Logout</button> {/* Logout Button */}
 
                     {(userRole === 'employee' || userRole === 'admin') && (
                         <button className="nav-button" onClick={handleStaffTransactions}>Staff Transactions</button>
@@ -210,4 +205,3 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
-
