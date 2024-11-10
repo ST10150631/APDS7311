@@ -5,6 +5,7 @@ import bannerImage from '../Img/skyscrapers.jpeg';
 import Logo from '../Img/SWIFT BANKING.png';
 import card from '../Img/Swift Card.png'
 import './styles/Navbar.css';
+import './styles/UserTable.css';
 import { jwtDecode } from 'jwt-decode';
 const Dashboard = () => {
     const [customerName, setCustomerName] = useState('');
@@ -13,12 +14,7 @@ const Dashboard = () => {
     const [userRole, setUserRole] = useState('');
     const [loading, setLoading] = useState(true);
     const [transactions, setTransactions] = useState([]);
-    const [allUsers, setAllUsers] = useState({
-        users: [],
-        admins: [],
-        employees: [],
-        managers: []
-    });
+    const [allUsers, setAllUsers] = useState([])
     const [selectedRole, setSelectedRole] = useState('');
 
     const navigate = useNavigate();
@@ -52,7 +48,7 @@ const Dashboard = () => {
     }, []);
 
     const fetchUsers = async (role) => {
-        if (!role) return; // Check if the role is empty before making the API call
+        if (!role) return;
         setLoading(true);
         try {
             const response = await fetch(`https://localhost:3001/user/allUsers?role=${role}`, {
@@ -60,9 +56,23 @@ const Dashboard = () => {
                     'Authorization': `Bearer ${localStorage.getItem('token')}`
                 },
             });
+
             if (response.ok) {
                 const data = await response.json();
-                setAllUsers(data[role] || []); // Ensure data for the selected role is set
+                console.log("Fetched Data:", data);
+
+                // Check if data is an object with roles or an array
+                if (Array.isArray(data)) {
+                    // If the response is an array, filter by role
+                    const filteredUsers = data.filter(user => user.role === role);
+                    setAllUsers(prevState => ({ ...prevState, [role]: filteredUsers }));
+                } else if (data[role]) {
+                    // If the response is an object with roles, update the respective role array
+                    setAllUsers(prevState => ({ ...prevState, [role]: data[role] || [] }));
+                } else {
+                    console.error(`Role "${role}" not found in response`);
+                    setAllUsers(prevState => ({ ...prevState, [role]: [] }));
+                }
             }
         } catch (error) {
             console.error("Error fetching users:", error);
@@ -70,7 +80,6 @@ const Dashboard = () => {
             setLoading(false);
         }
     };
-
     const deleteUser = async (id) => {
         try {
             const response = await fetch(`https://localhost:3001/user/deleteUser/${id}`, {
@@ -91,14 +100,14 @@ const Dashboard = () => {
     };
 
     // Fetch users based on selected role
-    useEffect(() => {
-        fetchUsers(selectedRole);
-        console.log("Selected Role",selectedRole)
-    }, [selectedRole]);
+    // useEffect(() => {
+    // fetchUsers(selectedRole);
+    ///  console.log("Selected Role",selectedRole)
+    // }, [selectedRole]);
 
-    useEffect(() => {
-        console.log('All Users:', allUsers);
-    }, [allUsers]);
+    // useEffect(() => {
+    //    console.log('All Users:', allUsers);
+    // }, [allUsers]);
 
     const fetchUserByUsername = async () => {
         const token = localStorage.getItem('token');
@@ -165,7 +174,11 @@ const Dashboard = () => {
     const handleTransactions = () => navigate('/Transactions');
     const handleStaffTransactions = () => navigate('/StaffTransactions');
     const handleInternationalPayment = () => navigate('/InternationalPayments');
-
+    useEffect(() => {
+        if (selectedRole) {
+            fetchUsers(selectedRole);
+        }
+    }, [selectedRole]);
     if (loading) {
         return <div>Loading...</div>;
     }
@@ -173,6 +186,7 @@ const Dashboard = () => {
     // Determine the dashboard heading based on the user role
     const dashboardHeading = userRole === 'admin' ? 'Admin Dashboard' :
         userRole === 'employee' ? 'Employee Dashboard' : 'Customer Dashboard';
+
     return (
         <div className="bgDashboard">
             <div className="TopNavbar">
@@ -261,52 +275,58 @@ const Dashboard = () => {
                         </table>
                     </div>
                 )}
-              {userRole === 'admin' && (
-    <div className="main-content">
-        <h2>Select Role to View Users</h2>
-        <select value={selectedRole} onChange={(e) => setSelectedRole(e.target.value)}>
-            <option value="">Select Role</option>
-            <option value="user">Users</option>
-            <option value="admin">Admins</option>
-            <option value="employee">Employees</option>
-            <option value="manager">Managers</option>
-        </select>
+                {userRole === 'admin' && (
+                    <div className="user-content">
+                        <h2>Select Role to View Users</h2>
+                        <select value={selectedRole} onChange={(e) => setSelectedRole(e.target.value)}>
+                            <option value="">Select Role</option>
+                            <option value="users">Users</option>
+                            <option value="admins">Admins</option>
+                            <option value="employees">Employees</option>
+                            <option value="managers">Managers</option>
+                        </select>
 
-        <h2>All Users</h2>
-        {selectedRole && allUsers[selectedRole]?.length > 0 ? (
-    <table className="user-table">
-        <thead>
-            <tr>
-                <th>First Name</th>
-                <th>Last Name</th>
-                <th>Email</th>
-                <th>Username</th>
-                <th>ID Number</th>
-                <th>Role</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {allUsers[selectedRole].map(user => (
-                <tr key={user.id}>
-                    <td>{user.firstName}</td>
-                    <td>{user.lastName}</td>
-                    <td>{user.email}</td>
-                    <td>{user.username}</td>
-                    <td>{user.idNumber}</td>
-                    <td>{user.role}</td>
-                    <td>
-                        <button onClick={() => deleteUser(user.id)}>Delete</button>
-                    </td>
-                </tr>
-            ))}
-        </tbody>
-    </table>
-        ) : (
-            <p>No users available for this role.</p>
-        )}
-    </div>
-)}
+                        <h2>All Users</h2>
+                        {selectedRole && allUsers[selectedRole]?.length > 0 ? (
+                            <table className="user-table">
+                                <thead>
+                                    <tr>
+                                        <th>First Name</th>
+                                        <th>Last Name</th>
+                                        <th>Email</th>
+                                        <th>Username</th>
+                                        <th>ID Number</th>
+                                        <th>Role</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {allUsers[selectedRole]?.map(user => (
+                                        <tr key={user._id}>
+                                            <td>{user.firstName}</td>
+                                            <td>{user.lastName}</td>
+                                            <td>{user.email}</td>
+                                            <td>{user.username}</td>
+                                            <td>{user.idNumber}</td>
+                                            <td>{user.role}</td>
+                                            <td>
+                                                <button
+                                                    onClick={() => {
+                                                        deleteUser(user._id);
+                                                    }}
+                                                >
+                                                    Delete
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        ) : (
+                            <p>No users available for this role.</p>
+                        )}
+                    </div>
+                )}
             </div>
 
             <div className="Footer">
