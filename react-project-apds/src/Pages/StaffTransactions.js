@@ -40,7 +40,10 @@ const StaffTransactions = () => {
         fetchTransactions();
         fetchUserByUsername();
     }, []); // Empty dependency array ensures this runs only once after the component mounts
-
+    const handleLogout = () => {
+        localStorage.removeItem('token');  // Remove token from localStorage
+        navigate('/login');                // Redirect to login page
+    };
     // Handle Confirm action
     const handleConfirm = async (transactionId) => {
         try {
@@ -181,7 +184,7 @@ const StaffTransactions = () => {
         <div className="bgDashboard">
             <div className="TopNavbar">
                 <img src={Logo} className="logo" alt="Logo" />
-                <h1>Staff Transactions</h1>
+                <h1>Transaction Management</h1>
             </div>
 
             <div className="Image-Banner">
@@ -192,6 +195,7 @@ const StaffTransactions = () => {
                 {/* Side Menu */}
                 <div className="navbar">
                     <button className="nav-button" onClick={() => navigate('/Dashboard')}>Dashboard</button>
+                    <button className="deny-button" onClick={handleLogout}>Logout</button> {/* Logout Button */}
                     {userRole === 'admin' && (
                         <>
                             <button className="nav-button" onClick={() => navigate('/CreateAdmin')}>Admin Creation</button>

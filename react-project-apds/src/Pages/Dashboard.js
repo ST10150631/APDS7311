@@ -204,12 +204,13 @@ const Dashboard = () => {
                     )}
 
 
-                    {(userRole === 'employee' || userRole === 'admin') && (
-                        <button className="nav-button" onClick={handleStaffTransactions}>Staff Transactions</button>
+                    {(userRole === 'employee' ) && (
+                        navigate('/StaffTransactions')
                     )}
 
                     {userRole === 'admin' && (
                         <>
+                            <button className="nav-button" onClick={handleStaffTransactions}>Manage Transactions</button>
                             <button className="nav-button" onClick={() => navigate('/CreateAdmin')}>Admin Creation</button>
                             <button className="nav-button" onClick={() => navigate('/CreateEmployee')}>Create Employee</button>
                         </>
