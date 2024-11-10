@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { jwtDecode } from 'jwt-decode'; // Corrected import
 import './styles/Register.css';
 
 const CreateEmployee = () => {
@@ -13,21 +12,41 @@ const CreateEmployee = () => {
     const [enteredIDNumberEmployee, setIDNumberEmployee] = useState('');
     const [error, setError] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
-    const [userRole, setUserRole] = useState(''); // Initialize role state
+    const [userRole, setUserRole] = useState('');
     const navigate = useNavigate();
 
     useEffect(() => {
-        const token = localStorage.getItem('token'); // Retrieve token from localStorage
-        if (token) {
-            try {
-                const decodedToken = jwtDecode(token); // Use jwtDecode here
-                setUserRole(decodedToken.role); // Set the role from the decoded token
-            } catch (error) {
-                console.error('Error decoding token:', error);
-                setUserRole(''); // Set role to empty if there's an error
+        // Fetch user data to check if the logged-in user is an admin
+        const fetchUserData = async () => {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                navigate('/login');
+                return;
             }
-        }
-    }, []);
+
+            try {
+                const response = await fetch('https://localhost:3001/user/getUser', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                    },
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    setUserRole(result.user.role); // Set the role of the logged-in user
+                } else {
+                    navigate('/login');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                navigate('/login');
+            }
+        };
+
+        fetchUserData();
+    }, [navigate]);
 
     const handleEmployeeCreation = async (e) => {
         e.preventDefault();
@@ -70,7 +89,6 @@ const CreateEmployee = () => {
         }
     };
 
-    // Redirect or show a message if the user is not an admin
     if (userRole !== 'admin') {
         return (
             <div style={{ textAlign: 'center' }}>

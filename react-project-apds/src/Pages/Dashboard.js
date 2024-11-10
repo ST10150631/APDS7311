@@ -3,9 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import '../index.css';
 import bannerImage from '../Img/skyscrapers.jpeg';
 import Logo from '../Img/SWIFT BANKING.png';
-import card from '../Img/Swift Card.png'
+import card from '../Img/Swift Card.png';
 import './styles/Navbar.css';
 import { jwtDecode } from 'jwt-decode';
+
 const Dashboard = () => {
     const [customerName, setCustomerName] = useState('');
     const [accountNumber, setAccountNumber] = useState('');
@@ -13,14 +14,7 @@ const Dashboard = () => {
     const [userRole, setUserRole] = useState('');
     const [loading, setLoading] = useState(true);
     const [transactions, setTransactions] = useState([]);
-    const [allUsers, setAllUsers] = useState({
-        users: [],
-        admins: [],
-        employees: [],
-        managers: []
-    });
-    const [selectedRole, setSelectedRole] = useState('');
-
+    
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -44,61 +38,13 @@ const Dashboard = () => {
             } catch (error) {
                 console.error("Error fetching transactions:", error);
             } finally {
-                setLoading(false);  // Set loading to false after fetching
+                setLoading(false);
             }
         };
 
         fetchTransactions();
+        fetchUserByUsername();
     }, []);
-
-    const fetchUsers = async (role) => {
-        if (!role) return; // Check if the role is empty before making the API call
-        setLoading(true);
-        try {
-            const response = await fetch(`https://localhost:3001/user/allUsers?role=${role}`, {
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`
-                },
-            });
-            if (response.ok) {
-                const data = await response.json();
-                setAllUsers(data[role] || []); // Ensure data for the selected role is set
-            }
-        } catch (error) {
-            console.error("Error fetching users:", error);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const deleteUser = async (id) => {
-        try {
-            const response = await fetch(`https://localhost:3001/user/deleteUser/${id}`, {
-                method: 'DELETE',
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`
-                }
-            });
-            if (response.ok) {
-                alert('User successfully deleted');
-                fetchUsers(selectedRole); // Refresh users after deletion
-            } else {
-                console.error("Failed to delete user");
-            }
-        } catch (error) {
-            console.error("Error deleting user:", error);
-        }
-    };
-
-    // Fetch users based on selected role
-    useEffect(() => {
-        fetchUsers(selectedRole);
-        console.log("Selected Role",selectedRole)
-    }, [selectedRole]);
-
-    useEffect(() => {
-        console.log('All Users:', allUsers);
-    }, [allUsers]);
 
     const fetchUserByUsername = async () => {
         const token = localStorage.getItem('token');
@@ -108,14 +54,9 @@ const Dashboard = () => {
         }
 
         try {
-            // Decode the JWT token
             const decodedToken = jwtDecode(token);
-            console.log("Decoded Token:", decodedToken); // Log the entire decoded token
-
             const username = decodedToken.username;
-            console.log("Username from Token:", username); // Log the username to ensure it's correct
 
-            // Fetch user data using the decoded username
             const response = await fetch(`https://localhost:3001/user/getUserByUsername?username=${username}`, {
                 method: 'GET',
                 headers: {
@@ -126,8 +67,7 @@ const Dashboard = () => {
 
             if (response.ok) {
                 const result = await response.json();
-                console.log("API Response:", result);  // Log the API response to see if data is correct
-
+                
                 if (result.schema === 'User') {
                     setCustomerName(`${result.user.firstName} ${result.user.lastName}`);
                     setAccountNumber(result.user.accountNumber);
@@ -137,12 +77,10 @@ const Dashboard = () => {
                     setCustomerName(`${result.admin.firstName} ${result.admin.lastName}`);
                     setAvailableBalance(result.admin.balance ? `$${result.admin.balance.toFixed(2)}` : '$0.00');
                     setUserRole(result.admin.role);
-                    console.log("Role", result.admin.role);
                 } else if (result.schema === 'Employee') {
                     setCustomerName(`${result.employee.firstName} ${result.employee.lastName}`);
                     setAccountNumber(result.employee.accountNumber);
                     setUserRole(result.employee.role);
-                    console.log("Role", result.employee.role);
                 }
             } else {
                 console.error('Failed to fetch user data');
@@ -150,16 +88,15 @@ const Dashboard = () => {
         } catch (error) {
             console.error('Error:', error);
         } finally {
-            setLoading(false);  // Set loading to false after fetching
+            setLoading(false);
         }
     };
-    fetchUserByUsername();
 
+    const handleLogout = () => {
+        localStorage.removeItem('token');  // Remove token from localStorage
+        navigate('/login');                // Redirect to login page
+    };
 
-    // Function to fetch user details by username
-
-
-    // Handle navigation for various actions
     const handleLocalPayment = () => navigate('/localpayments');
     const handleAddFunds = () => navigate('/addfunds');
     const handleTransactions = () => navigate('/Transactions');
@@ -170,14 +107,12 @@ const Dashboard = () => {
         return <div>Loading...</div>;
     }
 
-    // Determine the dashboard heading based on the user role
-    const dashboardHeading = userRole === 'admin' ? 'Admin Dashboard' :
-        userRole === 'employee' ? 'Employee Dashboard' : 'Customer Dashboard';
     return (
         <div className="bgDashboard">
             <div className="TopNavbar">
                 <img src={Logo} className="logo" alt="Logo" />
-                <h1>{dashboardHeading}</h1>
+                <h1>Customer Dashboard</h1>
+                
             </div>
 
             <div className="Image-Banner">
@@ -190,6 +125,7 @@ const Dashboard = () => {
                     <button className="nav-button" onClick={handleLocalPayment}>Local Payments</button>
                     <button className="nav-button" onClick={handleAddFunds}>Deposit</button>
                     <button className="nav-button" onClick={handleInternationalPayment}>International Payments</button>
+                    <button className="deny-button" onClick={handleLogout}>Logout</button> {/* Logout Button */}
 
                     {(userRole === 'employee' || userRole === 'admin') && (
                         <button className="nav-button" onClick={handleStaffTransactions}>Staff Transactions</button>
@@ -203,110 +139,62 @@ const Dashboard = () => {
                     )}
                 </div>
 
-                {userRole === 'user' && (
-                    <div className="main-content">
-                        <h2>Hello, {customerName}</h2>
+                <div className="main-content">
+                    <h2>Hello, {customerName}</h2>
 
-                        <h2>Payments</h2>
-                        <div>
-                            <button className="button" onClick={handleLocalPayment}>Make Local Payment</button>
-                            <button className="button" onClick={handleInternationalPayment}>Make International Payment</button>
-                        </div>
+                    <h2>Payments</h2>
+                    <div>
+                        <button className="button" onClick={handleLocalPayment}>Make Local Payment</button>
+                        <button className="button" onClick={handleInternationalPayment}>Make International Payment</button>
+                    </div>
 
-                        <h2>Banking Details</h2>
-                        <div>
+                    <h2>Banking Details</h2>
+                    <div>
+                        <strong>Current Account</strong>
+                        <div><span>Acc No: {accountNumber}</span></div>
+                        <div><span>Available Balance: {availableBalance}</span></div>
+                    </div>
+
+                    <h2>My Cards</h2>
+                    <div className="banking-details-container">
+                        <img src={card} alt="Swift Banking" className="banking-logo" />
+                        <div className="banking-details">
                             <strong>Current Account</strong>
+                            <div><span>Name: {customerName}</span></div>
                             <div><span>Acc No: {accountNumber}</span></div>
                             <div><span>Available Balance: {availableBalance}</span></div>
+                            <div><span>Role: {userRole}</span></div>
                         </div>
-
-                        <h2>My Cards</h2>
-                        <div className="banking-details-container">
-                            <img src={card} alt="Swift Banking" className="banking-logo" />
-                            <div className="banking-details">
-                                <strong>Current Account</strong>
-                                <div><span>Name: {customerName}</span></div>
-                                <div><span>Acc No: {accountNumber}</span></div>
-                                <div><span>Available Balance: {availableBalance}</span></div>
-                                <div><span>Role: {userRole}</span></div>
-                            </div>
-                        </div>
-
-                        <h2>Payment Receipts</h2>
-                        <table className="transaction-table">
-                            <thead>
-                                <tr>
-                                    <th>Date</th>
-                                    <th>Recipient Name</th>
-                                    <th>Recipient Bank</th>
-                                    <th>Amount</th>
-                                    <th>SWIFT Code</th>
-                                    <th>Transaction Status</th>
-                                    <th>Transaction Type</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {transactions.map((transaction, index) => (
-                                    <tr key={index}>
-                                        <td>{new Date(transaction.date).toLocaleDateString()}</td>
-                                        <td>{transaction.recipientName}</td>
-                                        <td>{transaction.recipientsBank}</td>
-                                        <td>{transaction.amountToTransfer}</td>
-                                        <td>{transaction.swiftCode}</td>
-                                        <td>{transaction.status ? transaction.status : 'No status'}</td>
-                                        <td>{transaction.transactionType || 'Unknown'}</td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
                     </div>
-                )}
-              {userRole === 'admin' && (
-    <div className="main-content">
-        <h2>Select Role to View Users</h2>
-        <select value={selectedRole} onChange={(e) => setSelectedRole(e.target.value)}>
-            <option value="">Select Role</option>
-            <option value="user">Users</option>
-            <option value="admin">Admins</option>
-            <option value="employee">Employees</option>
-            <option value="manager">Managers</option>
-        </select>
 
-        <h2>All Users</h2>
-        {selectedRole && allUsers[selectedRole]?.length > 0 ? (
-    <table className="user-table">
-        <thead>
-            <tr>
-                <th>First Name</th>
-                <th>Last Name</th>
-                <th>Email</th>
-                <th>Username</th>
-                <th>ID Number</th>
-                <th>Role</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {allUsers[selectedRole].map(user => (
-                <tr key={user.id}>
-                    <td>{user.firstName}</td>
-                    <td>{user.lastName}</td>
-                    <td>{user.email}</td>
-                    <td>{user.username}</td>
-                    <td>{user.idNumber}</td>
-                    <td>{user.role}</td>
-                    <td>
-                        <button onClick={() => deleteUser(user.id)}>Delete</button>
-                    </td>
-                </tr>
-            ))}
-        </tbody>
-    </table>
-        ) : (
-            <p>No users available for this role.</p>
-        )}
-    </div>
-)}
+                    <h2>Payment Receipts</h2>
+                    <table className="transaction-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Recipient Name</th>
+                                <th>Recipient Bank</th>
+                                <th>Amount</th>
+                                <th>SWIFT Code</th>
+                                <th>Transaction Status</th>
+                                <th>Transaction Type</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {transactions.map((transaction, index) => (
+                                <tr key={index}>
+                                    <td>{new Date(transaction.date).toLocaleDateString()}</td>
+                                    <td>{transaction.recipientName}</td>
+                                    <td>{transaction.recipientsBank}</td>
+                                    <td>{transaction.amountToTransfer}</td>
+                                    <td>{transaction.swiftCode}</td>
+                                    <td>{transaction.status ? transaction.status : 'No status'}</td>
+                                    <td>{transaction.transactionType || 'Unknown'}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
             </div>
 
             <div className="Footer">
@@ -317,4 +205,3 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
-
