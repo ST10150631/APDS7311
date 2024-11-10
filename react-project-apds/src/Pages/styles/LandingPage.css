@@ -1,0 +1,62 @@
+.landing-page {
+  filter: blur(5px);
+  transition: filter 1s ease-out;
+}
+
+.landing-page.loaded {
+  filter: blur(0);
+}
+
+.landing-container {
+  text-align: center;
+  color: white; 
+  font-family: 'Arial', sans-serif;
+  padding: 20px;
+  border-radius: 10px;
+  z-index: 1; 
+}
+
+.landing-container h1 {
+  font-size: 3rem;
+  margin-bottom: 20px;
+  font-weight: bold;
+  color: white;
+}
+
+.landing-container p {
+  font-size: 1.2rem;
+  margin-bottom: 40px;
+  line-height: 1.6; 
+  max-width: 1000px; 
+  margin-left: auto;
+  margin-right: auto;
+  color: white; 
+}
+
+.button-container {
+  display: flex;
+  flex-direction: row; 
+  gap: 20px;
+  justify-content: center;
+  align-items: center;
+}
+
+.landing-btn {
+  background-color: #007bff;
+  color: white; 
+  border: none;
+  padding: 15px 30px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+  width: 200px; 
+}
+
+.landing-btn:hover {
+  background-color: #126167;
+}
+
+.landing-btn:focus {
+  outline: none; 
+}

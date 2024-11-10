@@ -6,6 +6,7 @@ import {createBrowserRouter,RouterProvider,} from "react-router-dom";
 import Register from './Pages/Register';
 import Login from './Pages/Login';
 import Dashboard from './Pages/Dashboard';
+import LandingPage from './Pages/LandingPage';
 import Test from './Pages/Test';
 import InternationalPayment from './Pages/InternationalPayments';
 import LocalPayment from './Pages/LocalPayments';
@@ -20,6 +21,10 @@ import AddFunds from './Pages/AddFunds';
   const router = createBrowserRouter([
     {
       path: "/",
+      element: <LandingPage/>,
+    },
+    {
+      path: "Register",
       element: <Register/>,
     },
     {
