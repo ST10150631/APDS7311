@@ -51,14 +51,16 @@ jobs:
       - run:
           name: Set JAVA_HOME to Java 17
           command: |
-            export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+            export JAVA_HOME=/usr/lib/jvm/java-17-openjdk
             export PATH=$JAVA_HOME/bin:$PATH
             java -version
             echo $JAVA_HOME
 
       - run:
-          name: Run SonarCloud analysis
+          name: Run SonarCloud analysis with Java 17
           command: |
+            export JAVA_HOME=/usr/lib/jvm/java-17-openjdk
+            export PATH=$JAVA_HOME/bin:$PATH
             sonar-scanner \
               -Dsonar.projectKey=st10150631 \
               -Dsonar.organization=Mike_Turner \
