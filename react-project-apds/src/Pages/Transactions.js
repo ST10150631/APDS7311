@@ -3,12 +3,44 @@ import { Link, useNavigate } from 'react-router-dom';
 import '../index.css';
 import bannerImage from '../Img/Digital-Transactions.jpg';
 import Logo from '../Img/SWIFT BANKING.png';
+import { jwtDecode } from 'jwt-decode';
 import './styles/TransactionTable.css'
 const Dashboard = () => {
     const [transactions, setTransactions] = useState([]); // State to hold transactions
+    const [customerName, setCustomerName] = useState('');
     const navigate = useNavigate();
 
     useEffect(() => {
+        const fetchUserByUsername = async () => {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                navigate('/login');
+                return;
+            }
+    
+            try {
+                const decodedToken = jwtDecode(token);
+                const username = decodedToken.username;
+    
+                const response = await fetch(`https://localhost:3001/user/getUserByUsername?username=${username}`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                    },
+                });
+    
+                if (response.ok) {
+                    const result = await response.json();
+                        setCustomerName(`${result.user.firstName} ${result.user.lastName}`);
+                    
+                } else {
+                    console.error('Failed to fetch user data');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        };
         
         const fetchTransactions = async () => {
             try {
@@ -30,7 +62,7 @@ const Dashboard = () => {
                 console.error("Error fetching transactions:", error);
             }
         };
-
+        fetchUserByUsername();
         fetchTransactions();
     }, []); 
 
@@ -66,7 +98,7 @@ const Dashboard = () => {
 
                 {/* Main Content */}
                 <div className="main-table-content">
-                    <h2 className="textBlack">Hello, Mike</h2>
+                <h2 class="textBlack">Hello, {customerName}</h2>
 
                     <h2 className="textBlack">Transaction History</h2>
 
