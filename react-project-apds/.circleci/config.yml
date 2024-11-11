@@ -38,6 +38,11 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Install Java 17 (if not already installed)
+          command: |
+            java -version || (echo "Java 17 not found, installing it..." && apt-get update && apt-get install -y openjdk-17-jdk)
+            
+      - run:
           name: Install curl and SonarScanner
           command: |
             apt-get update && apt-get install -y curl unzip
