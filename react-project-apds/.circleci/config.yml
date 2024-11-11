@@ -26,9 +26,6 @@ jobs:
       - node/install-packages:
           pkg-manager: npm
       - run:
-          name: Build frontend
-          command: npm run build  
-      - run:
           name: Create artifacts directory
           command: mkdir -p ~/artifacts
       - run:
