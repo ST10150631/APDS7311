@@ -42,7 +42,7 @@ jobs:
     working_directory: ~/project
     steps:
       - checkout
-            - run:
+      - run:
           name: Install SonarScanner 4.6.2
           command: |
             curl -sSLo sonar-scanner-cli.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.6.2.2472-linux.zip
