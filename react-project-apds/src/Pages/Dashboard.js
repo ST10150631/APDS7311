@@ -101,15 +101,6 @@ const Dashboard = () => {
         }
     };
 
-    // Fetch users based on selected role
-    // useEffect(() => {
-    // fetchUsers(selectedRole);
-    ///  console.log("Selected Role",selectedRole)
-    // }, [selectedRole]);
-
-    // useEffect(() => {
-    //    console.log('All Users:', allUsers);
-    // }, [allUsers]);
 
     const fetchUserByUsername = async () => {
         const token = localStorage.getItem('token');
