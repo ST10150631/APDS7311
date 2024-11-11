@@ -49,13 +49,6 @@ jobs:
             source $BASH_ENV
 
       - run:
-          name: Set Java 17 as default
-          command: |
-            update-alternatives --config java
-            export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
-            export PATH=$JAVA_HOME/bin:$PATH
-
-      - run:
           name: Run SonarCloud analysis
           command: |
             sonar-scanner \
