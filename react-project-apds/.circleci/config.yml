@@ -45,9 +45,9 @@ jobs:
       - run:
           name: Install SonarScanner
           command: |
-            curl -sSLo sonar-scanner-cli.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.4.0.2170-linux.zip
+            curl -sSLo sonar-scanner-cli.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.0.0.1743-linux.zip
             unzip sonar-scanner-cli.zip -d $HOME
-            echo "export PATH=\$HOME/sonar-scanner-4.4.0.2170-linux/bin:\$PATH" >> $BASH_ENV
+            echo "export PATH=\$HOME/sonar-scanner-4.0.0.1743-linux/bin:\$PATH" >> $BASH_ENV
             source $BASH_ENV
       - run:
           name: Run SonarCloud analysis
