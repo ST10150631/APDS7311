@@ -199,6 +199,9 @@
     border: 2px solid #591000;  
   }
   
+  .blackText{
+    color: black;
+  }
 
 .payment-list {
     list-style-type: none;

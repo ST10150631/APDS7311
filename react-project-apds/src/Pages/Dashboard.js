@@ -221,22 +221,22 @@ const Dashboard = () => {
 
                 {userRole === 'user' && (
                     <div className="main-content">
-                        <h2>Hello, {customerName}</h2>
+                        <h2 class="textBlack">Hello, {customerName}</h2>
 
-                        <h2>Payments</h2>
+                        <h2 class="textBlack">Payments</h2>
                         <div>
                             <button className="button" onClick={handleLocalPayment}>Make Local Payment</button>
                             <button className="button" onClick={handleInternationalPayment}>Make International Payment</button>
                         </div>
 
-                        <h2>Banking Details</h2>
+                        <h2 class="textBlack">Banking Details</h2>
                         <div>
                             <strong>Current Account</strong>
                             <div><span>Acc No: {accountNumber}</span></div>
                             <div><span>Available Balance: {availableBalance}</span></div>
                         </div>
 
-                        <h2>My Cards</h2>
+                        <h2 class="textBlack">My Cards</h2>
                         <div className="banking-details-container">
                             <img src={card} alt="Swift Banking" className="banking-logo" />
                             <div className="banking-details">
@@ -247,7 +247,7 @@ const Dashboard = () => {
                             </div>
                         </div>
 
-                        <h2>Payment Receipts</h2>
+                        <h2 class="textBlack">Payment Receipts</h2>
                         <table className="transaction-table">
                             <thead>
                                 <tr>
