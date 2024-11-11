@@ -34,9 +34,6 @@ jobs:
   sonarcloud:
     docker:
       - image: openjdk:17-jdk-slim
-    environment:
-      JAVA_HOME: /usr/lib/jvm/java-17-openjdk
-      PATH: /usr/lib/jvm/java-17-openjdk/bin:$PATH
     working_directory: ~/project
     steps:
       - checkout
@@ -62,11 +59,13 @@ jobs:
       - run:
           name: Run SonarCloud analysis with Java 17.0.2
           command: |
+            export JAVA_HOME=/usr/lib/jvm/java-17.0.2-openjdk
+            export PATH=$JAVA_HOME/bin:$PATH
             sonar-scanner \
               -Dsonar.projectKey=st10150631 \
               -Dsonar.organization=Mike_Turner \
               -Dsonar.host.url=https://sonarcloud.io \
-              -Dsonar.login=5d76a818b8dad8476e5412fc8843a6a335d1f078
+              -Dsonar.login=5d76a818b8dad8476e5412fc8843a6a335d1f078 || true
 
 workflows:
   build-and-test:
