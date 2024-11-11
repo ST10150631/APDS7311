@@ -43,9 +43,17 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Install OpenJDK 17
+          name: Download and install OpenJDK 17
           command: |
+            curl -sSL -o ~/project/openjdk-17.tar.gz https://adoptium.net/releases.html?variant=openjdk17&jvmVariant=hotspot
+            
+            if [ ! -f ~/project/openjdk-17.tar.gz ]; then
+              echo "OpenJDK tarball not found, aborting!"
+              exit 1
+            fi
+
             tar -xzf ~/project/openjdk-17.tar.gz -C $HOME
+
             echo "export JAVA_HOME=\$HOME/jdk-17.0.8" >> $BASH_ENV
             echo "export PATH=\$JAVA_HOME/bin:\$PATH" >> $BASH_ENV
             source $BASH_ENV
