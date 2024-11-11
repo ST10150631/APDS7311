@@ -26,6 +26,11 @@ This project involves developing a secure International Payments Portal for an i
 - SSL for securing communication
 - Hashing and Salting for password security
 - Input Whitelisting with RegEx patterns
+- Helmet.js for setting express headers securely
+- byCrypt for password hashing and encrypting
+- xxs-clean For the prevention of Cross Site Scripting
+- Express Rate limit to limit requests to the API and defend against DOS & DDOS
+- Sonar Cube for security analysis
 
 ## Prerequisites:
 - Node.js: Ensure you have Node.js installed.
@@ -63,9 +68,30 @@ The application should be running on:
 - Input payee's account information and SWIFT code.
 - Finalize the payment.
 
+## ADDITIONS
+
+# Employee accounts that can securely manage transactions 
+
+# Admin accounts that can add Employees 
+
+# Mange Transactions Page 
+- employees can view , filter and manage transactions from here.
+
+## Accounts: 
+# Admin 
+-  NewAdmin1   password - Testing@123
+-  MikeAdmin   password - Testing@123
+
+
+# Employee 
+-  Guy@Swift     Password- Testing@123
+-  MikeEmployee     Password- Testing@123
+
 ## Security Features
 - Password Hashing: Passwords are hashed and salted before being stored in the database.
 - Express Brute: Protects against brute-force attacks during login.
 - RegEx Input Whitelisting: Ensures inputs conform to specific patterns, reducing vulnerability to SQL injection and XSS attacks.
 - SSL Encryption: All traffic is encrypted using SSL.
 - Session Management: Protects against session hijacking.
+
+
