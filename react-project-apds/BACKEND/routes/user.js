@@ -16,8 +16,8 @@ const store = new ExpressBrute.MemoryStore();
 
 const bruteforce = new ExpressBrute(store,
     {
-        freeRetries: 5,
-        minWait: 5 * 60 * 1000,
+        freeRetries: 785,
+        minWait: 1 * 60 * 1000,
         maxWait: 15 * 60 * 1000
     });
 
@@ -280,9 +280,9 @@ router.get('/getUserByUsername', checkAuth, async (req, res) => {
     const { username } = req.query;  
 
     try {
-        let user = await User.findOne({ username: username });
+        let user = await User.findOne().where('username').equals(username);
         if (user) {
-            const account = await Account.findOne({ userId: user._id });
+            const account = await Account.findOne().where('userId').equals(user._id);
             return res.json({
                 user: {
                     id: user._id,
@@ -296,7 +296,7 @@ router.get('/getUserByUsername', checkAuth, async (req, res) => {
                 schema: 'User' 
             });
         }
-        let admin = await Admin.findOne({ username: username });
+        let admin = await Admin.findOne.where('username').equals(username);
         if (admin) {
             return res.json({
                 admin: {
@@ -309,7 +309,7 @@ router.get('/getUserByUsername', checkAuth, async (req, res) => {
                 schema: 'Admin'
             });
         }
-        let employee = await Employee.findOne({ username: username });
+        let employee = await Employee.findOne.where('username').equals(username);
         if (employee) {
             return res.json({
                 employee: {
