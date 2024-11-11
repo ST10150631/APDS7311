@@ -43,22 +43,18 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Install Java 17
+          command: |
+            curl -sSLo openjdk-17.tar.gz https://download.java.net/java/GA/jdk17/0d7b82de3c6a44769d39078f7b23b343/35/GPL/openjdk-17_linux-x64_bin.tar.gz
+            tar -xzf openjdk-17.tar.gz -C $HOME
+            echo "export JAVA_HOME=\$HOME/jdk-17" >> $BASH_ENV
+            echo "export PATH=\$JAVA_HOME/bin:\$PATH" >> $BASH_ENV
+            source $BASH_ENV
+      - run:
           name: Install SonarScanner 4.6.2
           command: |
             curl -sSLo sonar-scanner-cli.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.6.2.2472-linux.zip
-            
-            if [ $? -ne 0 ]; then
-              echo "Error downloading SonarScanner. Exiting..."
-              exit 1
-            fi
-            
             unzip sonar-scanner-cli.zip -d $HOME
-            
-            if [ $? -ne 0 ]; then
-              echo "Error extracting SonarScanner. Exiting..."
-              exit 1
-            fi
-            
             echo "export PATH=\$HOME/sonar-scanner-4.6.2.2472-linux/bin:\$PATH" >> $BASH_ENV
             source $BASH_ENV
       - run:
@@ -69,7 +65,7 @@ jobs:
               -Dsonar.organization=Mike_Turner \
               -Dsonar.host.url=https://sonarcloud.io \
               -Dsonar.login=5d76a818b8dad8476e5412fc8843a6a335d1f078
-
+              
 workflows:
   build-and-test:
     jobs:
