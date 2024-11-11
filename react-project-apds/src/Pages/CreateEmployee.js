@@ -13,24 +13,38 @@ const CreateEmployee = () => {
     const [enteredIDNumberEmployee, setIDNumberEmployee] = useState('');
     const [error, setError] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
-    const [userRole, setUserRole] = useState('');
+    const [isAuthorized, setIsAuthorized] = useState(false); // To track authorization status
     const navigate = useNavigate();
 
     useEffect(() => {
-        const token = localStorage.getItem('token');
-        console.log('Token from localStorage:', token); // Check the token value
-        if (token) {
-            try {
-                const decodedToken = jwtDecode(token);
-                setUserRole(decodedToken.role);
-            } catch (error) {
-                console.error('Error decoding token:', error);
-                setUserRole('');
+        const checkAdminRole = async () => {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                navigate('/login');
+                return;
             }
-        }
-    
 
-    }, []);
+            try {
+                const response = await fetch('https://localhost:3001/authRouter/checkAdmin', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                    },
+                });
+
+                if (response.ok) {
+                    setIsAuthorized(true); // User is authorized as admin
+                } else {
+                    navigate('/not-authorized'); // Redirect if not authorized
+                }
+            } catch (error) {
+                console.error('Authorization error:', error);
+                navigate('/login'); // Redirect if error occurs
+            }
+        };
+
+        checkAdminRole();
+    }, [navigate]);
 
     const handleEmployeeCreation = async (e) => {
         e.preventDefault();
@@ -73,7 +87,7 @@ const CreateEmployee = () => {
         }
     };
 
-    if (userRole !== 'admin') {
+    if (!isAuthorized) {
         return (
             <div style={{ textAlign: 'center' }}>
                 <h1>You do not have permission to access this page.</h1>

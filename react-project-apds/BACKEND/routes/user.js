@@ -253,18 +253,13 @@ router.post('/createAdmin', checkAuth, checkRole(['admin']), validateRegistratio
     }
 });
 
-//const { Manager } = require('./models'); // Ensure this path is correct
-
 // Define the route to create a manager
 router.post('/createManager', checkAuth, checkRole(['admin']), validateRegistrationInputs, async (req, res) => {
     const { firstName, lastName, email, username, password, idNumber } = req.body;
 
     try {
-        // Generate a salt and hash the password
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
-
-        // Create the manager object
         const manager = new Manager({
             firstName,
             lastName,
@@ -273,11 +268,7 @@ router.post('/createManager', checkAuth, checkRole(['admin']), validateRegistrat
             password: hashedPassword,
             idNumber
         });
-
-        // Save the manager to the database
         const savedManager = await manager.save();
-
-        // Send a success response
         res.status(201).send({ manager: savedManager });
     } catch (error) {
         console.error('Error creating manager:', error);
@@ -286,17 +277,12 @@ router.post('/createManager', checkAuth, checkRole(['admin']), validateRegistrat
 });
 
 router.get('/getUserByUsername', checkAuth, async (req, res) => {
-    const { username } = req.query;  // Assuming the username is passed as a query parameter
+    const { username } = req.query;  
 
     try {
-        // Search for the user in the User schema
         let user = await User.findOne({ username: username });
-
         if (user) {
-            // If user found, retrieve the account details from the Account schema
             const account = await Account.findOne({ userId: user._id });
-            
-            // Prepare the response data for user and account details
             return res.json({
                 user: {
                     id: user._id,
@@ -307,11 +293,9 @@ router.get('/getUserByUsername', checkAuth, async (req, res) => {
                     accountNumber: account ? account.accountNumber : null,
                     balance: account ? account.balance : 0.0,
                 },
-                schema: 'User' // Indicate which schema the data is coming from
+                schema: 'User' 
             });
         }
-
-        // If no user found, check the Admin schema
         let admin = await Admin.findOne({ username: username });
         if (admin) {
             return res.json({
@@ -325,8 +309,6 @@ router.get('/getUserByUsername', checkAuth, async (req, res) => {
                 schema: 'Admin'
             });
         }
-
-        // If no admin found, check the Employee schema
         let employee = await Employee.findOne({ username: username });
         if (employee) {
             return res.json({
@@ -340,10 +322,7 @@ router.get('/getUserByUsername', checkAuth, async (req, res) => {
                 schema: 'Employee'
             });
         }
-
-        // If no matching username is found in any of the schemas
-        return res.status(404).json({ error: 'User not found in any schema' });
-
+        return res.status(404).json({ error: 'User not found' });
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Server error' });
@@ -397,6 +376,9 @@ router.delete('/deleteUser/:id', checkAuth, checkRole(['admin']), async (req, re
         res.status(500).json({ error: 'Failed to delete user' });
     }
 });
+
+
+
 
 module.exports = router;
 //---------------------------------END OF FILE------------------------------//

@@ -6,6 +6,7 @@ const app = express();
 const PORT = 3001;
 const user = require("./routes/user");
 const payment = require("./routes/payment");
+const authRouter = require("./routes/authRouter");
 const { connectToDatabase } = require('./db/conn');
 const helmet = require('helmet');
 
@@ -36,6 +37,8 @@ app.use('/user',user);
 app.route("/user",user);
 app.use('/payment',payment)
 app.route('/payment',payment)
+app.use('/authRouter',authRouter)
+app.route('/authRouter',authRouter)
 
 
 
