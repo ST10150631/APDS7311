@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode'; // Corrected import
 import './styles/Register.css';
 const CreateAdmin = () => {
+
     const [enteredFirstNameAdmin, setEnteredFirstNameAdmin] = useState('');
     const [enteredLastNameAdmin, setEnteredLastNameAdmin] = useState('');
     const [enteredEmailAddressAdmin, setEnteredEmailAddressAdmin] = useState('');
@@ -12,39 +13,23 @@ const CreateAdmin = () => {
     const [enteredIDNumberAdmin, setIDNumberAdmin] = useState('');
     const [error, setError] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
-    const [isAuthorized, setIsAuthorized] = useState(false);
+    const [userRole, setUserRole] = useState(''); // Initialize role state
 
     const navigate = useNavigate();
 
     useEffect(() => {
-        const checkAdminRole = async () => {
-            const token = localStorage.getItem('token');
-            if (!token) {
-                navigate('/login');
-                return;
-            }
-
+        const token = localStorage.getItem('token');
+        console.log('Token from localStorage:', token); // Check the token value
+        if (token) {
             try {
-                const response = await fetch('https://localhost:3001/authRouter/checkAdmin', {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                    },
-                });
-
-                if (response.ok) {
-                    setIsAuthorized(true); // User is authorized as admin
-                } else {
-                    navigate('/not-authorized'); // Redirect if not authorized
-                }
+                const decodedToken = jwtDecode(token);
+                setUserRole(decodedToken.role);
             } catch (error) {
-                console.error('Authorization error:', error);
-                navigate('/login'); // Redirect if error occurs
+                console.error('Error decoding token:', error);
+                setUserRole('');
             }
-        };
-
-        checkAdminRole();
-    }, [navigate]);
+        }
+    }, []);
 
     const handleAdminCreation = async (e) => {
         e.preventDefault();
@@ -55,7 +40,7 @@ const CreateAdmin = () => {
             email: enteredEmailAddressAdmin,
             username: enteredUsernameAdmin,
             password: enteredPasswordAdmin,
-            idNumber: enteredIDNumberAdmin,
+            idNumber: enteredIDNumberAdmin
         };
 
         const token = localStorage.getItem('token');
@@ -63,7 +48,7 @@ const CreateAdmin = () => {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`,
+                'Authorization': `Bearer ${token}`, // Add this line to send the token
             },
             body: JSON.stringify(adminData),
         });
@@ -71,6 +56,7 @@ const CreateAdmin = () => {
         if (response.ok) {
             const result = await response.json();
             setSuccessMessage('Admin account created successfully!');
+            //console.log('User registered successfully:', result);
             navigate('/dashboard');
             setEnteredFirstNameAdmin('');
             setEnteredLastNameAdmin('');
@@ -78,6 +64,7 @@ const CreateAdmin = () => {
             setEnteredUsernameAdmin('');
             setEnteredPasswordAdmin('');
             setEnteredConfirmPasswordAdmin('');
+
             setIDNumberAdmin('');
             setError('');
         } else {
@@ -86,16 +73,14 @@ const CreateAdmin = () => {
             console.error('Admin account creation failed:', errorData);
         }
     };
-
-    // Only render the form if the user is authorized as an admin
-    if (!isAuthorized) {
+    // Redirect or show a message if the user is not an admin
+    if (userRole !== 'admin') {
         return (
             <div style={{ textAlign: 'center' }}>
                 <h1>You do not have permission to access this page.</h1>
             </div>
         );
     }
-
     return (
         <div
             style={{
@@ -183,6 +168,5 @@ const CreateAdmin = () => {
             </div>
         </div>
     );
-};
-
-export default CreateAdmin;
+}
+export default CreateAdmin; 

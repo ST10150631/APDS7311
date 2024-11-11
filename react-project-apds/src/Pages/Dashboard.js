@@ -48,7 +48,6 @@ const Dashboard = () => {
         fetchTransactions();
         fetchUserByUsername();
     }, []);
-
     const fetchUsers = async (role) => {
         if (!role) return;
         setLoading(true);

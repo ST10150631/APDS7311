@@ -296,7 +296,7 @@ router.get('/getUserByUsername', checkAuth, async (req, res) => {
                 schema: 'User' 
             });
         }
-        let admin = await Admin.findOne.where('username').equals(username);
+        let admin = await Admin.findOne().where('username').equals(username);
         if (admin) {
             return res.json({
                 admin: {
@@ -309,7 +309,7 @@ router.get('/getUserByUsername', checkAuth, async (req, res) => {
                 schema: 'Admin'
             });
         }
-        let employee = await Employee.findOne.where('username').equals(username);
+        let employee = await Employee.findOne().where('username').equals(username);
         if (employee) {
             return res.json({
                 employee: {

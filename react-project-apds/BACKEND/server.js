@@ -37,8 +37,7 @@ app.use('/user',user);
 app.route("/user",user);
 app.use('/payment',payment)
 app.route('/payment',payment)
-app.use('/authRouter',authRouter)
-app.route('/authRouter',authRouter)
+
 
 
 
