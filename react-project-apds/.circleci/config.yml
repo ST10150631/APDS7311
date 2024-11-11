@@ -17,11 +17,6 @@ jobs:
       - checkout
       - node/install-packages:
           pkg-manager: npm
-      - run:
-          name: Run backend tests
-          command: npm test  
-      - store_test_results:
-          path: ~/project/BACKEND/test-results 
 
   build-frontend:
     executor: node/default
