@@ -16,8 +16,8 @@ const store = new ExpressBrute.MemoryStore();
 
 const bruteforce = new ExpressBrute(store,
     {
-        freeRetries: 785,
-        minWait: 1 * 60 * 1000,
+        freeRetries: 5,
+        minWait: 5 * 60 * 1000,
         maxWait: 15 * 60 * 1000
     });
 
