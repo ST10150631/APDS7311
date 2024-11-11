@@ -38,18 +38,6 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Install OpenJDK 17
-          command: |
-            curl -sSL -o ~/project/openjdk-17.0.13+11.tar.gz https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.13+11/OpenJDK17U-jdk_x64_linux_hotspot_17.0.13_11.tar.gz
-            if [ ! -f ~/project/openjdk-17.0.13+11.tar.gz ]; then
-              echo "OpenJDK tarball not found, aborting!"
-              exit 1
-            fi
-            tar -xzf ~/project/openjdk-17.0.13+11.tar.gz -C $HOME
-            echo "export JAVA_HOME=\$HOME/jdk-17.0.13+11" >> $BASH_ENV
-            echo "export PATH=\$JAVA_HOME/bin:\$PATH" >> $BASH_ENV
-            source $BASH_ENV
-      - run:
           name: Install SonarScanner
           command: |
             curl -sSLo sonar-scanner-cli.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.6.2.2472-linux.zip
