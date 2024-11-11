@@ -3,12 +3,6 @@ version: 2.1
 orbs:
   node: circleci/node@5 
 
-executors:
-  sonar-executor:
-    docker:
-      - image: circleci/openjdk:17-jdk-slim   
-    working_directory: ~/project
-
 jobs:
   test-backend:
     executor: node/default
@@ -38,7 +32,8 @@ jobs:
           destination: frontend-build
 
   sonarcloud:
-    executor: sonar-executor
+    docker:
+      - image: openjdk:17-jdk-slim   
     working_directory: ~/project
     steps:
       - checkout
