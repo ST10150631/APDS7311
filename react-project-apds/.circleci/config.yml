@@ -49,6 +49,12 @@ jobs:
             source $BASH_ENV
 
       - run:
+          name: Verify Java version
+          command: |
+            java -version
+            echo $JAVA_HOME
+
+      - run:
           name: Run SonarCloud analysis
           command: |
             sonar-scanner \
