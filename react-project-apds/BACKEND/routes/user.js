@@ -289,11 +289,14 @@ router.get('/getUserByUsername', checkAuth, async (req, res) => {
     const { username } = req.query;  // Assuming the username is passed as a query parameter
 
     try {
-        // Search for the username in the User schema
-        let user = await User.findOne().where('username').equals(username);
+        // Search for the user in the User schema
+        let user = await User.findOne({ username: username });
 
         if (user) {
-            // If a user is found, return user data
+            // If user found, retrieve the account details from the Account schema
+            const account = await Account.findOne({ userId: user._id });
+            
+            // Prepare the response data for user and account details
             return res.json({
                 user: {
                     id: user._id,
@@ -301,17 +304,16 @@ router.get('/getUserByUsername', checkAuth, async (req, res) => {
                     lastName: user.lastName,
                     email: user.email,
                     role: user.role,
-                    accountNumber: user.accountNumber,
-                    balance: user.balance,
+                    accountNumber: account ? account.accountNumber : null,
+                    balance: account ? account.balance : 0.0,
                 },
                 schema: 'User' // Indicate which schema the data is coming from
             });
         }
 
         // If no user found, check the Admin schema
-        let admin = await Admin.findOne().where('username').equals(username);
+        let admin = await Admin.findOne({ username: username });
         if (admin) {
-            // If an admin is found, return admin data
             return res.json({
                 admin: {
                     id: admin._id,
@@ -320,14 +322,13 @@ router.get('/getUserByUsername', checkAuth, async (req, res) => {
                     email: admin.email,
                     role: admin.role
                 },
-                schema: 'Admin' // Indicate which schema the data is coming from
+                schema: 'Admin'
             });
         }
 
         // If no admin found, check the Employee schema
-        let employee = await Employee.findOne().where('username').equals(username);
+        let employee = await Employee.findOne({ username: username });
         if (employee) {
-            // If an employee is found, return employee data
             return res.json({
                 employee: {
                     id: employee._id,
@@ -336,7 +337,7 @@ router.get('/getUserByUsername', checkAuth, async (req, res) => {
                     email: employee.email,
                     role: employee.role,
                 },
-                schema: 'Employee' // Indicate which schema the data is coming from
+                schema: 'Employee'
             });
         }
 
