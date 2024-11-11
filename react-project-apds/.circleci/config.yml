@@ -19,7 +19,7 @@ jobs:
           pkg-manager: npm
       - run:
           name: Run backend tests
-          command: npm test --prefix BACKEND  
+          command: npm test  
       - store_test_results:
           path: ~/project/BACKEND/test-results 
 
@@ -32,7 +32,7 @@ jobs:
           pkg-manager: npm
       - run:
           name: Build frontend
-          command: npm run build --prefix src  
+          command: npm run build  
       - run:
           name: Create artifacts directory
           command: mkdir -p ~/artifacts
